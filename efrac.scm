@@ -228,6 +228,11 @@
 (length A)
  
 
-(set! B (filter (lambda (x) (= (reciprocal-sum x) (/ 3 2))) (power-set (range 1 20))))
+(set! B (filter (lambda (x) (= (reciprocal-sum x) (/ 3 2))) (power-set (range 1 15))))B
 
 (length (filter (lambda (x) (= (length x) 7)) A))
+(time (efrac-representation (range 1 183) 5))
+(* 1.0 (reciprocal-sum (range 1 60)))
+
+(display "\nhi\n")
+1, 6, 24, 65, 
