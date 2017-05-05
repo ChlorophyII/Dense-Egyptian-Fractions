@@ -1,0 +1,55 @@
+(load "efrac.so")
+(compile-file "math.scm")
+(compile-file "efrac.scm")
+
+(define (egyptian-fraction-representation r x)
+  (set! d (range 1 x))
+  (set! d (rule-out-non-smooth-denominators d x r))
+  (set! sum (reciprocal-sum d))
+  (set! denom (denominator sum))
+  (set! denom-factor (factor denom primes-list))
+  (set! greatest-prime-power (find-greatest-prime-power denom-factor))
+  (set! multiples-gpp (filter (lambda (x) (divide? greatest-prime-power x)) d))
+  (set! power-set-m-gpp (power-set multiples-gpp))
+  (filter (lambda (x)
+            (and
+             (pair? x)
+             (not
+              (=
+               denom
+               (denominator
+                (-
+                 sum
+                 (reciprocal-sum x)))))))
+          power-set-m-gpp))
+
+(time (egyptian-fraction-representation (/ 7 19) 20000))
+
+(define a (range 1 500))
+(set! a (rule-out-non-smooth-denominators a 500 1))
+(define b (map reciprocal a))
+(set! s (reciprocal-sum a))
+(find-greatest-prime-power (factor (denominator s) primes-list))
+
+(length a)
+(length (remv 223 a))
+(factor 361 primes-list)
+(set! a (remove 223 a))
+(map (lambda (x)
+       (cons
+        (length
+         (filter
+          (lambda (y)
+            (divide? (expt (car x) (cadr x)) y))
+          a))
+        (car x)))
+     (factor (denominator s) primes-list))
+
+(define s (range 5))
+(remove 3 s)
+
+(factor (denominator s) primes-list)
+
+(/ (denominator s) 8)
+
+(filter (lambda (x) (divide? 19 x)) a)
