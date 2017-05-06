@@ -197,6 +197,11 @@
 
 (define (efrac-representation D r)
   (define (rec collector list-of-D)
+    (display "------------------\ncollector    list-of-D\n")
+    (display (length collector))
+    (display "          ")
+    (display (length list-of-D))
+    (newline)
     (cond ((null? list-of-D) collector)
           (else
            (let ((new-list-of-D '()))
@@ -224,15 +229,16 @@
       (list D)
       (rec '() (list D))))
 
-(set! A (efrac-representation (range 1 20) (/ 3 2)))
+(set! A (efrac-representation (range 1 64) 4))
 (length A)
  
 
 (set! B (filter (lambda (x) (= (reciprocal-sum x) (/ 3 2))) (power-set (range 1 15))))B
 
 (length (filter (lambda (x) (= (length x) 7)) A))
-(time (efrac-representation (range 1 183) 5))
-(* 1.0 (reciprocal-sum (range 1 60)))
+(time (set! A (efrac-representation (range 1 500) 6)))
+(* 1.0 (reciprocal-sum (range 1 300)))
 
 (display "\nhi\n")
-1, 6, 24, 65, 
+1, 6, 24, 65, 184, 
+(define (estimate x) (* 0.992943 (expt 2.71828 (* 1.04452 x))))g
