@@ -168,3 +168,6 @@
 (map (lambda (y) (filter (lambda (x) (divide? 9 x)) y)) (kill (range 1 24) 0 9))
 (map (lambda (y) (filter (lambda (x) (divide? 3 x)) y)) (kill (range 1 24) 0 3))
 (kill-nn (range 1 24) 0 9 (reciprocal-sum (range 1 24)))
+
+(kill-raw (range 1 30) 0 9)
+(map (lambda (x) (divide? 7 (denominator (reciprocal-sum x)))) (kill-raw (range 1 30) 0 7))
