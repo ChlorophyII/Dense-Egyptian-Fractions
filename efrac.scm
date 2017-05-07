@@ -1,17 +1,7 @@
 (load "math.so")
+(load "ext.so")
 
 (define (kill-n D rat n r)
-  ;; (define (kill-test denoms n r);No problem
-  ;;   ;;Return #t if denoms is a valid branch, otherwise #f
-  ;;   (let ((difference (- r (reciprocal-sum denoms))))
-  ;;     (and (not (< difference 0))
-  ;;          (not (divide?
-  ;;                n
-  ;;                (denominator difference))))))
-  ;; (define (kill-test denoms n r)
-  ;;   (cond ((null? denoms) #t)
-  ;;         ((divide? n (denominator (reciprocal-sum denoms))))))
-  
   (define (kill-test denoms M)
     (let ((complement (set-difference M denoms)))
        (let ((difference (- r (reciprocal-sum complement))))
@@ -24,13 +14,12 @@
                     (denominator
                      (- (reciprocal-sum x) rat)))))
             branches))
-  ;; (define (kill-test denoms M) #t)
-  (define (append-e e rest);No problem
+  (define (append-e e rest)
     (map (lambda (x)
            (append x (list e)))
          rest))
   (define sort-A
-    (lambda (a) (sort (lambda (x y) (> (car x) (car y))) a)));No problem
+    (lambda (a) (sort (lambda (x y) (> (car x) (car y))) a)))
   (define (recur A aim sum-r)
     ;;The first element of each entry of A is strictly positive
     (cond ((= aim 0) '(()))
@@ -46,23 +35,22 @@
                         (cdar A)
                         (recur (cdr A) (- aim e1) (- sum-r e1)))
                        (recur (cdr A) aim (- sum-r e1)))))))))
-  (define (generate-sets-aim A aim sum-r);No problem
+  (define (generate-sets-aim A aim sum-r)
     (let ((zero-pairs (filter (lambda (x) (= (car x) 0)) A))
            (non-zero-pairs (filter (lambda (x) (> (car x) 0)) A)))
        (let ((rest (recur non-zero-pairs aim sum-r)))
-         (cond ((and (= aim 0) (null? rest)) ;(display "cond1\n")
+         (cond ((and (= aim 0) (null? rest)) 
                 (power-set (map cdr zero-pairs)))
-               ((and (> aim 0) (null? rest)) ;(display "cond2\n")
+               ((and (> aim 0) (null? rest)) 
                 '())
                (else
                 (let ((power-zeros (power-set (map cdr zero-pairs))))
-                  ;(display "cond3\n")
                   (apply append
                          (map (lambda (x) (map (lambda (y) (append y x))
                                                power-zeros))
                               rest))))))))
-  (define (generate-sets A sum-r);No problem
-    (define (recur-gen-sets-aim A i sum-r);No problem
+  (define (generate-sets A sum-r)
+    (define (recur-gen-sets-aim A i sum-r)
       (if (< i 0)
           '()
           (append (generate-sets-aim A (* i n) sum-r)
@@ -70,25 +58,18 @@
     (let ((i (floor (/ sum-r n))))
       (recur-gen-sets-aim A i sum-r)))
   (let ((M (filter (lambda (x) (divide? n x)) D))
-        (MC (filter (lambda (x) (not (divide? n x))) D)));No problem
+        (MC (filter (lambda (x) (not (divide? n x))) D)))
     (let ((l (/ (apply lcm M) n)))
       (let ((A (map (lambda (x)
                       (cons (modulo (/ (* l n) x) n)
                             x))
                     M)))
         (let ((sum-r (apply + (map car A))))
-          ;; (let ((branch-counter-part (generate-sets A sum-r)))
-          ;;   (let ((raw-branches
-          ;;          (map (lambda (x) (append MC x)) branch-counter-part)))
-          ;;     ;(k-filter raw-branches rat n))))))))
-          ;;     raw-branches)))))))
-          
           (let ((branch-counter-part
-                 (filter (lambda (x) (kill-test x M));(kill-test x n r))
+                 (filter (lambda (x) (kill-test x M))
                          (generate-sets A sum-r))))
-            ;; (map (lambda (x) (filter (lambda (y) (not (member y x))) D))
-            ;;      branch-counter-part)
             (map (lambda (x) (append MC x)) branch-counter-part)))))))
+
 (define (kill-nn D rat n r)
   (define (kk-filter branches bd n)
     (filter (lambda (x)
@@ -103,12 +84,6 @@
           (branches (power-set M)))
       (map (lambda (x) (merge < MC x))
            (kk-filter branches bd n)))))
-
-;; (trace-define (kill D rat n)
-;;   (if (divide? n (denominator rat))
-;;       (kill-nn D rat n (- (reciprocal-sum D) rat))
-;;       (kill-n D rat n (- (reciprocal-sum D) rat))))
-
 
 (define (kill-raw D r n)
  (define (test x)
@@ -140,7 +115,7 @@
       (kill-ps D r n)
       (kill-nn D r n (- (reciprocal-sum D) r))))
 
-;; (define kill kill-raw)
+; (define kill kill-raw)
 
 (define (efrac-representation D r)
   (define (rec collector list-of-D)
