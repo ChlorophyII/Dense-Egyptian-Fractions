@@ -1,78 +1,5 @@
 (load "math.so")
 
-;; (define (rule-out-lower-bound x)
-;;   (define (approx-lower-bound x)
-;;     (let ((a (expt (+ (* 1.73205
-;;                          (sqrt (* (expt x 3.0)
-;;                                   (- (* 27.0 x)
-;;                                      2.0))))
-;;                       (* 9.0
-;;                          (expt x 2.0)))
-;;                    (reciprocal 3.0))))
-;;       (exact
-;;        (ceiling
-;;         (/ (* 0.302853
-;;               (+ (expt a 2.0)
-;;                  (* 1.81712 x)))
-;;            a)))))
-;;   (define (search-exact-lower-bound lb)
-;;     (let ((k (exact (floor (/ x lb)))))
-;;       (let ((d (- (* 2 lb)
-;;                   (+ (* k k)
-;;                      k))))
-;;         (if (< d 0)
-;;             (inc1 lb)
-;;             (search-exact-lower-bound (dec1 lb))))))
-;;   (cond ((> x 8)
-;;          (search-exact-lower-bound
-;;           (approx-lower-bound x)))
-;;         ((> x 5) 4)
-;;         (else
-;;          (error
-;;           '<procedure-RULE-OUT-LOWER-BOUND>
-;;           "\nAre you a tester? The number is too small!"))))
-
-;; (define (rule-out-non-smooth-denominators l x r)
-;;   (let ((prime-divisors-denom-r (prime-divisors (denominator r))))
-;;     (define (iter n l)
-;;     (if (> n x)
-;;         l
-;;         (if (and (prime? n)
-;;                  (not (member n prime-divisors-denom-r)))
-;;             (iter (inc1 n)
-;;                   (filter
-;;                    (lambda (x) (not (divide? n x)))
-;;                    l))
-;;             (iter (inc1 n) l))))
-;;     (iter (rule-out-lower-bound x) l)))
-
-;; (define (subset-sum-to-n l n)
-;;   (define (append-e e rest)
-;;     (map (lambda (x)
-;;            (append x (list e)))
-;;          rest))
-;;   (define (hf l n s)
-;;     (cond ((= n 0) '(()))
-;;           ((null? l) '())
-;;           (else
-;;            (let ((e (car l)))
-;;              (if (< (- s e) n)
-;;                  (append-e e
-;;                            (hf (filter
-;;                                 (lambda (x) (not (> x (- n e))))
-;;                                 (cdr l))
-;;                                (- n e)
-;;                                (- s e)))
-;;                  (append
-;;                   (hf (cdr l) n s)
-;;                   (append-e e
-;;                             (hf (filter
-;;                                  (lambda (x) (not (> x (- n e))))
-;;                                  (cdr l))
-;;                                 (- n e)
-;;                                 (- s e)))))))))
-;;   (hf (sort > l) n (sum l)))
-
 (define (kill-n D rat n r)
   ;; (define (kill-test denoms n r);No problem
   ;;   ;;Return #t if denoms is a valid branch, otherwise #f
@@ -229,16 +156,5 @@
       (list D)
       (rec '() (list D))))
 
-(set! A (efrac-representation (range 1 64) 4))
-(length A)
- 
 
-(set! B (filter (lambda (x) (= (reciprocal-sum x) (/ 3 2))) (power-set (range 1 15))))B
-
-(length (filter (lambda (x) (= (length x) 7)) A))
-(time (set! A (efrac-representation (range 1 500) 6)))
-(* 1.0 (reciprocal-sum (range 1 300)))
-
-(display "\nhi\n")
-1, 6, 24, 65, 184, 
-(define (estimate x) (* 0.992943 (expt 2.71828 (* 1.04452 x))))g
+;1, 6, 24, 65, 184,
