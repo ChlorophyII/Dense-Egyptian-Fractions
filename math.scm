@@ -59,8 +59,7 @@
   ;;This procedure is designed particularly for
   ;;summing reciprocals of natural numbers
   (define (length>=2? l)
-    ;;return #t if the list has more than 2 elements
-    (and (not (null? l))
+    (and (pair? l)
          (not (null? (cdr l)))))
   (define (apply-one-iter ll)
     (if (length>=2? ll)
