@@ -101,7 +101,7 @@
         (MC (filter (lambda (x) (not (divide? n x))) D)))
     (let ((bd (- (reciprocal-sum MC) rat))
           (branches (power-set M)))
-      (map (lambda (x) (append MC x))
+      (map (lambda (x) (merge < MC x))
            (kk-filter branches bd n)))))
 
 ;; (trace-define (kill D rat n)
@@ -109,8 +109,9 @@
 ;;       (kill-nn D rat n (- (reciprocal-sum D) rat))
 ;;       (kill-n D rat n (- (reciprocal-sum D) rat))))
 
+
 (define (kill-raw D r n)
-  (define (test x)
+ (define (test x)
     (let ((difference (- (reciprocal-sum x) r)))
       (cond ((< difference 0) #f)
             ((integer? difference) #t)
@@ -118,15 +119,34 @@
   (let ((M (filter (lambda (x) (divide? n x)) D))
         (NM (filter (lambda (x) (not (divide? n x))) D)))
     (let ((power-set-M (power-set M)))
-      (filter test (map (lambda (x) (append NM x)) power-set-M)))))
+      (filter test (map (lambda (x) (merge < NM x)) power-set-M)))))
 
-(define kill kill-raw)
+(define (kill-ps D r n) ;kill by generating power set
+  (define (test x bound)
+    (let ((difference (+ (reciprocal-sum x) bound)))
+      (cond ((< difference 0) #f)
+            ((integer? difference) #t)
+            (else (not (divide? n (denominator difference)))))))
+  (let ((M (filter (lambda (x) (divide? n x)) D))
+        (NM (filter (lambda (x) (not (divide? n x))) D)))
+    (let ((power-set-M (power-set M))
+          (bound (- (reciprocal-sum NM) r)))
+      (map (lambda (x) (merge < NM x))
+           (filter (lambda (y) (test y bound))
+                   power-set-M)))))
+
+(define (kill D r n)
+  (if (> (gcd (denominator r) n) 1)
+      (kill-ps D r n)
+      (kill-nn D r n (- (reciprocal-sum D) r))))
+
+;; (define kill kill-raw)
 
 (define (efrac-representation D r)
   (define (rec collector list-of-D)
-    (display "------------------\ncollector    list-of-D\n")
+    (display "----------------------\ncollector    list-of-D\n")
     (display (length collector))
-    (display "          ")
+    (display "            ")
     (display (length list-of-D))
     (newline)
     (cond ((null? list-of-D) collector)
@@ -156,5 +176,43 @@
       (list D)
       (rec '() (list D))))
 
-
 ;1, 6, 24, 65, 184,
+
+;; ((set! rat 7/18)
+;; (set! n 27)
+;; (set! D (range 1 160))
+;; (time (set! s1 (kill-raw D rat n)))
+;; (time (set! s2 (kill-n D rat n (- (reciprocal-sum D) rat))))
+;; (time (set! s3 (kill-nn D rat n (- (reciprocal-sum D) rat))))
+;; (time (set! s4 (kill-ps D rat n))))
+;; (greatest-prime-power (factor (denominator (reciprocal-sum D))))
+;; (car s1)
+;; s1
+;; s2
+;; s3
+;; (set-difference (map (lambda (x) (sort < x)) s1) (map (lambda (x) (sort < x)) s2))
+;; (set-difference (map (lambda (x) (sort < x)) s1) (map (lambda (x) (sort < x)) s3))
+;; (set-difference (map (lambda (x) (sort < x)) s1) (map (lambda (x) (sort < x)) s4))
+;; (set-difference s1 s2)
+;; (set-difference s1 s3)
+;; (set-difference s1 s4)
+
+
+;; (map reciprocal-sum s2)
+;; (map (lambda (x) (divide? 7 (denominator (reciprocal-sum x)))))
+
+;; (display "\nhi\n")
+
+;; (set! M (filter (lambda (x) (divide? 17 x)) (range 1 10000)))
+;; (set! NM (filter (lambda (x) (not (divide? 17 x))) (range 1 10000)))
+;; (time (set! sorted (sort < (append NM M))))
+;; (time (set! sorted (merge < NM M)))
+;; (merge < '(1 3 4) '(2 4 6))
+;; (time (set! garbage (member (range 1 10000)
+;;                             (map (lambda (x) (range 1 x)) (range 1 10010)))))
+
+;; (set! a '(1 2 3 4))
+;; (set-cadr! a 5)
+;; (define (set-cadr! a b)
+;;   (set-car! (cdr a) b))
+;; (set-cadr! a 5)
