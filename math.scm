@@ -79,7 +79,7 @@
 
 (define sum-rec (lambda (x) (apply-rec + x)))
 
-(define reciprocal-sum
+(define rec-sum
   (lambda (x)
     (if (null? x)
         0
