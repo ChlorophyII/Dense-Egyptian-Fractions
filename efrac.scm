@@ -24,7 +24,7 @@
             branches))
   (define (append-e e rest)
     (map (lambda (x)
-           (append x (list e)))
+           (merge < x (list e)))
          rest))
   (define sort-A
     (lambda (a) (sort (lambda (x y) (> (car x) (car y))) a)))
