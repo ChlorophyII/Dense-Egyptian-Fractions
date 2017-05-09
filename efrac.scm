@@ -5,8 +5,6 @@
 ;(compile-file "ext.scm")
 ;(compile-file "efrac-branch.scm")
 
-
-;TODO: Fix kill-n. Merge function, sort
 ;TODO: Implement kill-n branch version
 
 (define (kill-n D rat n r)
@@ -76,7 +74,8 @@
           (let ((branch-counter-part
                  (filter (lambda (x) (kill-test x M))
                          (generate-sets A sum-r))))
-            (map (lambda (x) (append MC x)) branch-counter-part)))))))
+            (map (lambda (y) (sort < y))
+                   (map (lambda (x) (append MC x)) branch-counter-part))))))))
 
 (define (kill-nn D rat n r)
   (define (kk-filter branches bd n)
@@ -128,22 +127,8 @@
         (NM (filter (lambda (x) (not (divide? n x))) (br-denominators branch))))
     (let ((sum-NM (- (br-sum branch) (sum M)))
           (rec-sum-NM (- (br-rec-sum branch) (rec-sum M))))
-          ;; (rec-sum-NM (rec-sum NM)))
     (let ((power-set-M (power-set M))
           (bound (- rec-sum-NM r)))
-      ;; (display "M:\n")
-      ;; (display M)
-      ;; (display "\nNM:\n")
-      ;; (display NM)
-      ;; (display "\nbr-sum:\n")
-      ;; (display (br-sum branch))
-      ;; (display "\nsum-NM:\n")
-      ;; (display sum-NM)
-      ;; (display "\nrec-sum-NM:\n")
-      ;; (display rec-sum-NM)
-      ;; (display "\nbound:\n")
-      ;; (display bound)
-      ;; (display "\n")
       (map (lambda (x)
              (make-br (+ sum-NM (sum x))
                       (+ rec-sum-NM (rec-sum x))
