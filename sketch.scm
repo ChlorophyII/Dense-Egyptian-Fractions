@@ -171,3 +171,19 @@
 
 (kill-raw (range 1 30) 0 9)
 (map (lambda (x) (divide? 7 (denominator (reciprocal-sum x)))) (kill-raw (range 1 30) 0 7))
+
+(set! branch (make-br (range 1 50)))
+(set! branch (make-br (set-difference (range 1 10) '(3 6))))
+(set! r 1/5)
+(set! n 7)
+(length (kill-n-br branch r n))
+(length (kill-ps-br branch r n))
+(set! s1 (kill-n-br branch r n))
+(set! s2 (kill-ps-br branch r n))
+(set-difference s1 s2)
+(set-difference s2 s1)
+(kill-n (range 1 28) 0 7 (rec-sum (range 1 28)))
+
+(merge < '(1 3 5 19 25 26 27 30) '(14 7 28))
+
+;To fix: range 1 49, n=7
