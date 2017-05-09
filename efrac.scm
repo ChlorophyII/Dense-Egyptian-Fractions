@@ -1,18 +1,17 @@
 (load "math.so")
 (load "ext.so")
 (load "efrac-branch.so")
-;(compile-file "math.scm")
-;(compile-file "ext.scm")
-;(compile-file "efrac-branch.scm")
-
-;TODO: Implement kill-n branch version
+                                        ;(compile-file "math.scm")
+                                        ;(compile-file "ext.scm")
+                                        ;(compile-file "efrac-branch.scm")
+                                        ;(compile-file "efrac.scm")
 
 (define (kill-n D rat n r)
   (define (kill-test denoms M)
     (let ((complement (set-difference M denoms)))
-       (let ((difference (- r (rec-sum complement))))
-         (and (not (divide? n (denominator difference)))
-              (not (< difference 0))))))
+      (let ((difference (- r (rec-sum complement))))
+        (and (not (divide? n (denominator difference)))
+             (not (< difference 0))))))
   (define (k-filter branches rat n)
     (filter (lambda (x)
               (not (divide?
@@ -24,8 +23,6 @@
     (map (lambda (x)
            (merge < x (list e)))
          rest))
-  (define sort-A
-    (lambda (a) (sort (lambda (x y) (> (car x) (car y))) a)))
   (define (recur A aim sum-r)
     ;;The first element of each entry of A is strictly positive
     (cond ((= aim 0) '(()))
@@ -43,18 +40,18 @@
                        (recur (cdr A) aim (- sum-r e1)))))))))
   (define (generate-sets-aim A aim sum-r)
     (let ((zero-pairs (filter (lambda (x) (= (car x) 0)) A))
-           (non-zero-pairs (filter (lambda (x) (> (car x) 0)) A)))
-       (let ((rest (recur non-zero-pairs aim sum-r)))
-         (cond ((and (= aim 0) (null? rest)) 
-                (power-set (map cdr zero-pairs)))
-               ((and (> aim 0) (null? rest)) 
-                '())
-               (else
-                (let ((power-zeros (power-set (map cdr zero-pairs))))
-                  (apply append
-                         (map (lambda (x) (map (lambda (y) (append y x))
-                                               power-zeros))
-                              rest))))))))
+          (non-zero-pairs (filter (lambda (x) (> (car x) 0)) A)))
+      (let ((rest (recur non-zero-pairs aim sum-r)))
+        (cond ((and (= aim 0) (null? rest)) 
+               (power-set (map cdr zero-pairs)))
+              ((and (> aim 0) (null? rest)) 
+               '())
+              (else
+               (let ((power-zeros (power-set (map cdr zero-pairs))))
+                 (apply append
+                        (map (lambda (x) (map (lambda (y) (append y x))
+                                              power-zeros))
+                             rest))))))))
   (define (generate-sets A sum-r)
     (define (recur-gen-sets-aim A i sum-r)
       (if (< i 0)
@@ -65,9 +62,9 @@
       (recur-gen-sets-aim A i sum-r)))
   (let ((M (filter (lambda (x) (divide? n x)) D))
         (MC (filter (lambda (x) (not (divide? n x))) D)))
-    (let ((l (/ (apply lcm M) n)))
+    (let ((lcm-M (apply lcm M)))
       (let ((A (map (lambda (x)
-                      (cons (modulo (/ (* l n) x) n)
+                      (cons (modulo (/ lcm-M x) n)
                             x))
                     M)))
         (let ((sum-r (apply + (map car A))))
@@ -75,15 +72,15 @@
                  (filter (lambda (x) (kill-test x M))
                          (generate-sets A sum-r))))
             (map (lambda (y) (sort < y))
-                   (map (lambda (x) (append MC x)) branch-counter-part))))))))
+                 (map (lambda (x) (append MC x)) branch-counter-part))))))))
 
 (define (kill-nn D rat n r)
   (define (kk-filter branches bd n)
     (filter (lambda (x)
               (let ((v (+ bd (rec-sum x))))
-                 (cond ((< v 0) #f)
-                       ((divide? n (denominator v)) #f)
-                       (else #t))))
+                (cond ((< v 0) #f)
+                      ((divide? n (denominator v)) #f)
+                      (else #t))))
             branches))
   (let ((M (filter (lambda (x) (divide? n x)) D))
         (MC (filter (lambda (x) (not (divide? n x))) D)))
@@ -93,7 +90,7 @@
            (kk-filter branches bd n)))))
 
 (define (kill-raw D r n)
- (define (test x)
+  (define (test x)
     (let ((difference (- (rec-sum x) r)))
       (cond ((< difference 0) #f)
             ((integer? difference) #t)
@@ -127,26 +124,105 @@
         (NM (filter (lambda (x) (not (divide? n x))) (br-denominators branch))))
     (let ((sum-NM (- (br-sum branch) (sum M)))
           (rec-sum-NM (- (br-rec-sum branch) (rec-sum M))))
-    (let ((power-set-M (power-set M))
-          (bound (- rec-sum-NM r)))
-      (map (lambda (x)
-             (make-br (+ sum-NM (sum x))
-                      (+ rec-sum-NM (rec-sum x))
-                      (merge < NM x)))
-           (filter (lambda (y) (test y bound))
-                   power-set-M))
-      ))))
-(set! D (range 1 30))
-(set! branch (make-br (sum D) (rec-sum D) D))
+      (let ((power-set-M (power-set M))
+            (bound (- rec-sum-NM r)))
+        (map (lambda (x)
+               (make-br (+ sum-NM (sum x))
+                        (+ rec-sum-NM (rec-sum x))
+                        (merge < NM x)))
+             (filter (lambda (y) (test y bound))
+                     power-set-M))
+        ))))
+
+(define (kill-n-br branch r n)
+  (define (kill-test raw-branch-counter-part-x rec-sum-MC)
+    (let ((difference (- (+ rec-sum-MC (car raw-branch-counter-part-x))
+                         r)))
+      (and (not (divide? n (denominator difference)))
+           (not (< difference 0)))))
+  (define (append-e e rest)
+    (map (lambda (x)
+           (merge < x (list e)))
+         rest))
+  (define (recur N aim sum-r);N = non-zero-pairs
+    (cond ((= aim 0) '(()))
+          ((or (null? N) (< aim 0) (< sum-r 0))
+           '())
+          (else
+           (let ((e1 (caar N)))
+             (cond
+              ((< (- sum-r e1) aim)
+               (append-e (cdar N) (recur (cdr N) (- aim e1) (- sum-r e1))))
+              (else ;(> (sum-r e1) aim)
+               (append (append-e
+                        (cdar N)
+                        (recur (cdr N) (- aim e1) (- sum-r e1)))
+                       (recur (cdr N) aim (- sum-r e1))))))))) 
+  (define (generate-sets-aim power-zero-pairs non-zero-pairs aim sum-r)
+    (let ((rest (recur non-zero-pairs aim sum-r)))
+      (cond ((and (= aim 0)); (null? rest))
+             power-zero-pairs)
+            ((and (> aim 0) (null? rest))
+             '())
+            (else
+             (apply append
+                    (map (lambda (x) (map (lambda (y) (merge < x y))
+                                          power-zero-pairs))
+                         rest))))))
+  (define (generate-sets A sum-r p)
+    (define (recur-gen-sets-aim power-zero-pairs non-zero-pairs i sum-r p)
+      (if (< i 0)
+          '()
+          (append (generate-sets-aim power-zero-pairs
+                                     non-zero-pairs
+                                     (* i p)
+                                     sum-r)
+                  (recur-gen-sets-aim power-zero-pairs non-zero-pairs (dec1 i) sum-r p))))
+    (let ((i (floor (/ sum-r p)))
+          (power-zero-pairs
+           (power-set
+            (map cdr
+                 (filter (lambda (x) (= (car x) 0))
+                         A))))
+          (non-zero-pairs (filter (lambda (x) (> (car x) 0)) A)))
+      (recur-gen-sets-aim power-zero-pairs non-zero-pairs i sum-r p)))
+  (let ((M (filter (lambda (x) (divide? n x)) (br-denominators branch)))
+        (MC (filter (lambda (x) (not (divide? n x)))
+                    (br-denominators branch)))
+        (p (caar (factor n))))
+    (let ((l (apply lcm M))
+          (sum-MC (- (br-sum branch) (sum M)))
+          (rec-sum-MC (- (br-rec-sum branch) (rec-sum M))))
+      (let ((A (map (lambda (x)
+                      (cons (modulo (/ l x) p)
+                            x))
+                    M)))
+        (let ((sum-r (sum (map car A))))
+          (let ((raw-branch-counter-part
+                 (map (lambda (x) (cons (rec-sum x) x))
+                      (generate-sets A sum-r p))))
+            (let ((branch-counter-part
+                   (filter (lambda (x) (kill-test x sum-MC))
+                           raw-branch-counter-part)))
+              (map (lambda (x) (make-br (+ sum-MC (sum (cdr x)))
+                                        (+ rec-sum-MC (car x))
+                                        (merge < MC (cdr x))))
+                   branch-counter-part))))))))
 
 (define (kill D r n)
   (if (> (gcd (denominator r) n) 1)
       (kill-ps D r n)
       (kill-n D r n (- (rec-sum D) r))))
 
-(define kill-br kill-ps-br)
+;(define kill kill-ps)
 
-(define kill kill-raw)
+(define (kill-br branch r n)
+  (if (> (gcd (denominator r) n) 1)
+      (kill-ps-br branch r n)
+      (kill-n-br branch r n)))
+
+;(define kill-br kill-ps-br)
+
 
 (define (efrac-representation D r)
   (define (rec collector list-of-D)
@@ -181,12 +257,6 @@
   (if (integer? (- (rec-sum D) r))
       (list D)
       (rec '() (list D))))
-
-
-
-
-
-
 
 (define (efrac-representation-br D r)
   (define (rec collector branches)
@@ -225,48 +295,4 @@
       (list D)
       (rec '() (list (make-br D)))))
 
-(time (set! s1 (efrac-representation-br (range 1 24) 131/84)))
-(time (set! s2 (efrac-representation (range 1 24) 131/84)))
-(set-difference s1 s2)
-(set-difference s2 s1)
-
-;1, 6, 24, 65, 184,
-
-;; ((set! rat 7/18)
-;; (set! n 27)
-;; (set! D (range 1 160))
-;; (time (set! s1 (kill-raw D rat n)))
-;; (time (set! s2 (kill-n D rat n (- (rec-sum D) rat))))
-;; (time (set! s3 (kill-nn D rat n (- (rec-sum D) rat))))
-;; (time (set! s4 (kill-ps D rat n))))
-;; (greatest-prime-power (factor (denominator (rec-sum D))))
-;; (car s1)
-;; s1
-;; s2
-;; s3
-;; (set-difference (map (lambda (x) (sort < x)) s1) (map (lambda (x) (sort < x)) s2))
-;; (set-difference (map (lambda (x) (sort < x)) s1) (map (lambda (x) (sort < x)) s3))
-;; (set-difference (map (lambda (x) (sort < x)) s1) (map (lambda (x) (sort < x)) s4))
-;; (set-difference s1 s2)
-;; (set-difference s1 s3)
-;; (set-difference s1 s4)
-
-
-;; (map rec-sum s2)
-;; (map (lambda (x) (divide? 7 (denominator (rec-sum x)))))
-
-;; (display "\nhi\n")
-
-;; (set! M (filter (lambda (x) (divide? 17 x)) (range 1 10000)))
-;; (set! NM (filter (lambda (x) (not (divide? 17 x))) (range 1 10000)))
-;; (time (set! sorted (sort < (append NM M))))
-;; (time (set! sorted (merge < NM M)))
-;; (merge < '(1 3 4) '(2 4 6))
-;; (time (set! garbage (member (range 1 10000)
-;;                             (map (lambda (x) (range 1 x)) (range 1 10010)))))
-
-;; (set! a '(1 2 3 4))
-;; (set-cadr! a 5)
-;; (define (set-cadr! a b)
-;;   (set-car! (cdr a) b))
-;; (set-cadr! a 5)
+                                        ;1, 6, 24, 65, 184,
