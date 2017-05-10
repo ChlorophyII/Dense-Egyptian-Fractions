@@ -187,3 +187,34 @@
 (merge < '(1 3 5 19 25 26 27 30) '(14 7 28))
 
 ;To fix: range 1 49, n=7
+
+(set! D (range 1 184))
+(time (length (efrac-representation D 4)))
+(time (length (map rec-sum (efrac-representation-br D 6))))
+
+
+
+(sets-intersection '((1 2 3 4) (1 2 3) (1 3 5)))
+(length (kill-n-br (make-br (range 1 30)) 0 3))
+(length (kill-ps (range 1 30) 0 3))
+(set! s1 (sets-intersection (efrac-representation-br (range 1 40) 3)))
+(set! s1 (sets-intersection (efrac-representation    (range 1 40) 3)))
+(set! s2 (sets-intersection (efrac-representation-br (range 1 66) 4)))
+(set! s3 (sets-intersection (efrac-representation-br (range 1 70) 4)))
+(set! s4 (sets-intersection (efrac-representation-br (range 1 184) 5)))
+
+(set! s0 (sets-intersection (efrac-representation-br (range 1 24) 3)))
+(set-difference s1 s4)
+(set-difference s4 s3)
+(factor 468)
+(time (length (efrac-representation-br
+               (set-difference (range 1 470)
+                               (merge < '(470) s4))
+               (- 6 (rec-sum (merge < '(470) s4))))))
+(time (length (efrac-representation-br (range 1 465) 6)))
+
+(kill-raw (map (lambda (x) (* x 47)) (range 1 10)) 0 47)
+
+(set! branch (make-br '(7 14 21 28 35 42 49)))
+(length (kill-n-br  branch 0 7))
+(length (kill-ps-br branch 0 7))
