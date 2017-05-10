@@ -153,3 +153,20 @@
          (cons (car s1) (set-difference (cdr s1) s2)))
         (else
          (set-difference (cdr s1) s2))))
+(define (set-intersection a b)
+  (define (recur a b)
+    (cond ((or (null? a) (null? b)) '())
+          ((= (car a) (car b))
+           (cons (car a)
+                 (recur (cdr a) (cdr b))))
+          ((< (car a) (car b))
+           (recur (cdr a) b))
+          (else
+           (recur a (cdr b)))))
+  (recur (sort < a) (sort < b)))
+
+(define (sets-intersection sets)
+  (if (length>=2? sets)
+      (set-intersection (car sets)
+                        (sets-intersection (cdr sets)))
+      (car sets)))
