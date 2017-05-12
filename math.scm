@@ -153,6 +153,10 @@
          (cons (car s1) (set-difference (cdr s1) s2)))
         (else
          (set-difference (cdr s1) s2))))
+
+(define (set-symmetric-difference s1 s2)
+  (append (set-difference s1 s2) (set-difference s2 s1)))
+
 (define (set-intersection a b)
   (define (recur a b)
     (cond ((or (null? a) (null? b)) '())
@@ -170,3 +174,10 @@
       (set-intersection (car sets)
                         (sets-intersection (cdr sets)))
       (car sets)))
+
+(define (set-reduce set)
+  (cond ((null? set) '())
+        (else
+         (if (member (car set) (cdr set))
+             (set-reduce (cdr set))
+             (cons (car set) (set-reduce (cdr set)))))))

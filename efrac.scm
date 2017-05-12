@@ -75,21 +75,6 @@
             (map (lambda (y) (sort < y))
                  (map (lambda (x) (append MC x)) branch-counter-part))))))))
 
-(define (kill-nn D rat n r)
-  (define (kk-filter branches bd n)
-    (filter (lambda (x)
-              (let ((v (+ bd (rec-sum x))))
-                (cond ((< v 0) #f)
-                      ((divide? n (denominator v)) #f)
-                      (else #t))))
-            branches))
-  (let ((M (filter (lambda (x) (divide? n x)) D))
-        (MC (filter (lambda (x) (not (divide? n x))) D)))
-    (let ((bd (- (rec-sum MC) rat))
-          (branches (power-set M)))
-      (map (lambda (x) (merge < MC x))
-           (kk-filter branches bd n)))))
-
 (define (kill-raw D r n)
   (define (test x)
     (let ((difference (- (rec-sum x) r)))
@@ -203,7 +188,7 @@
                  (map (lambda (x) (cons (rec-sum x) x))
                       (generate-sets A sum-r p))))
             (let ((branch-counter-part
-                   (filter (lambda (x) (kill-test x sum-MC))
+                   (filter (lambda (x) (kill-test x rec-sum-MC))
                            raw-branch-counter-part)))
               (map (lambda (x) (make-br (+ sum-MC (sum (cdr x)))
                                         (+ rec-sum-MC (car x))
@@ -215,13 +200,14 @@
       (kill-ps D r n)
       (kill-n D r n (- (rec-sum D) r))))
 
-;(define kill kill-ps)
+;(define kill kill-raw)
 
 (define (kill-br branch r n)
   (if (> (gcd (denominator r) n) 1)
       (kill-ps-br branch r n)
       (kill-n-br branch r n)))
 
+;(define kill-br kill-n-br)
 ;(define kill-br kill-ps-br)
 
 
@@ -297,3 +283,4 @@
       (rec '() (list (make-br D)))))
 
                                         ;1, 6, 24, 65, 184,
+
