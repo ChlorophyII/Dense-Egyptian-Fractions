@@ -1,10 +1,3 @@
-(define (br-map proc branches)
-  (map (lambda (x)
-         (cons (car x)
-               (cons (cadr x)
-                     (proc (cddr x)))))
-       branches))
-
 (define make-br
   (case-lambda
    ((D) (cons (sum D)
