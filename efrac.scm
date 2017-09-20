@@ -276,8 +276,7 @@
                              ((and (not (integer? difference))
                                    (not (member sub-branch new-branches)))
                               (set! new-branches (cons sub-branch new-branches))))))
-                   sub-branches))
-                )
+                   sub-branches)))
               branches)
              (rec collector new-branches)))))
   (if (integer? (- (rec-sum D) r))
@@ -287,3 +286,92 @@
 (define efrac efrac-representation-br)
                                         ;1, 6, 24, 65, 184,
 
+(define (efrac-dfs-br D r)
+  (let ((collector '())
+        (branches (list (make-br D)))
+        (counter 1))
+    (define (iter)
+      (if (= (modulo counter 10) 0)
+          (display (string-append
+                    "counter: "
+                    (number->string counter)
+                    "        branches: "
+                    (number->string (length branches))
+                    "\n")))
+      (set! counter (+ counter 1))
+      (if (null? collector)
+          (if (null? branches)
+              '()
+              (let ((branch (car branches)))
+                (set! branches (cdr branches))
+                (let ((new-branches
+                       (kill-br branch
+                                r
+                                (greatest-prime-power
+                                 (factor
+                                  (denominator
+                                   (- (br-rec-sum branch)
+                                      r)))))))
+                  (for-each
+                   (lambda (new-branch)
+                     (let ((difference (- (br-rec-sum new-branch) r)))
+                       (cond ((and (integer? difference)
+                                   (not (member new-branch collector)))
+                              (set! collector (cons new-branch collector)))
+                             ((and (not (integer? difference))
+                                   ;#t)
+                                        (not (member new-branch branches)))
+                              (set! branches (cons new-branch branches))))))
+                   new-branches)
+                  (iter))))
+          (br-denominators (car collector))))
+    (iter)))
+
+(define (efrac-least-rec-sum-br D r)
+  ;; The difference between this procedure and efrac-dfs-br is that it
+  ;; always operates on the branch with lowest reciprocal sum
+  (let ((collector '())
+        (branches (list (make-br D)))
+        (counter 1))
+    (define (iter)
+      (if (= (modulo counter 10) 0)
+          (display (string-append
+                    "counter: "
+                    (number->string counter)
+                    "        branches: "
+                    (number->string (length branches))
+                    "\n")))
+      (set! counter (+ counter 1))
+      (if (null? collector)
+          (if (null? branches)
+              '()
+              (let ((branch (car branches)))
+                (set! branches (cdr branches))
+                (let ((new-branches
+                       (kill-br branch
+                                r
+                                (greatest-prime-power
+                                 (factor
+                                  (denominator
+                                   (- (br-rec-sum branch)
+                                      r)))))))
+                  (for-each
+                   (lambda (new-branch)
+                     (let ((difference (- (br-rec-sum new-branch) r)))
+                       (cond ((and (integer? difference)
+                                   (not (member new-branch collector)))
+                              (set! collector (cons new-branch collector)))
+                             ((and (not (integer? difference))
+                                        ;#t)
+                                   (not (member new-branch branches)))
+                              (set! branches
+                                    (merge
+                                     (lambda (br1 br2)
+                                       (< (br-rec-sum br1)
+                                          (br-rec-sum br2)))
+                                     (list new-branch)
+                                     branches))))))
+                   new-branches)
+                  (iter))))
+          (br-denominators (car collector))))
+    (iter)))
