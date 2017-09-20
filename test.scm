@@ -259,6 +259,7 @@ rest
 (* 1.0 r)
 (factor (denominator r) primes-list)
 (set! D (list 1 2 3 5 6 9 10 15 18 24 20 8 4))
+
 (set! s (list (list (list 1 2 3) (list 1 2 3))))
 (map car s)
 (apply append s)
@@ -266,3 +267,82 @@ rest
 (set! s (list (list 1 2) (list 3 4)))
 (set! z (list (list 'a) (list 'b)))
 (apply append (map (lambda (x) (map (lambda (y) (append x y)) s)) z))
+
+(map
+ (lambda (m)
+   ((map
+     (lambda (n)
+       (+ (reciprocal m)
+          (reciprocal n)))
+     (range m (* m m m)))))
+ (range 4 50))
+
+(define plus (lambda (x y) (+ x y)))
+
+
+(define (n-leading-to-minimum-denom m)
+  (let ((n-candidates (range (inc1 m) (expt m 3))))
+    (let ((min-denom-rec-sum
+           (fold-left
+            (lambda (rc1 rc2)
+              (if (< (denominator rc1)
+                     (denominator rc2))
+                  rc1
+                  rc2))
+            (/ 1 (expt m 10))
+            (map (lambda (n) (+ (/ 1 m) (/ 1 n)))
+                 n-candidates))))
+      (list (denominator
+             (- min-denom-rec-sum
+                (/ 1 m)))
+            min-denom-rec-sum))))
+
+(+ 1 1)
+
+(time (n-leading-to-minimum-denom 22))
+
+(define (first-n-terms n l)
+  (if (= n 0)
+      '()
+      (cons (car l)
+            (first-n-terms (dec1 n) (cdr l)))))
+
+(map n-leading-to-minimum-denom (first-n-terms 20 primes-list))
+(map (lambda (n) (* n (dec1 n))) (first-n-terms 20 primes-list))
+(define (test n)
+  (let ((a (inc1 n)))
+    (define (p-a m)
+      (set! a (+ a m))
+      a)
+    (p-a 3)))
+(test 1)
+
+
+
+(time (efrac-dfs-br (range 1 460) 6))
+(time (efrac (range 1 460) 6))
+(efrac (range 1 65) 4)
+
+(merge)
+
+(define (>3 n)
+  (if (> n 3)
+      #t
+      #f))
+(>3 4)
+
+(merge (lambda (x y) (< x y)) '(3) '(1 2 3 4))
+
+(set! a (time (efrac-least-rec-sum-br (range 1 800) 6)))
+(set! b (time (efrac-dfs-br (range 1 150) 4)))
+(set-symmetric-difference a b)
+
+
+(time (efrac (range 1 65) 4))
+
+
+
+(set! x '(3))
+(set! y '(1 2 3 4))
+(merge < x y)
+(set! efrac-6 (time (efrac-least-rec-sum-br D (- 6 (rec-sum inter-5)))))
