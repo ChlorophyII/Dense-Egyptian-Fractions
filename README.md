@@ -1,11 +1,12 @@
 # Dense-Egyptian-Fractions
 An algorithm for dense Egyptian fractions
+[![DOI](https://zenodo.org/badge/104223004.svg)](https://zenodo.org/badge/latestdoi/104223004)
 
 ### Description
 This program is designed to find dense Egyptian fraction representations of a given positive rational number, where the denominators in the representation are chosen from a given set. The idea is from <cite>[Dense Egyptian Fractions][1]</cite>.
 
-### Dependancy
-This program is implemented in <cite>[Chez Scheme][2]</cite>. So one have to install Chez Scheme first.
+### Dependency
+This program is implemented in <cite>[Chez Scheme][2]</cite>. So one has to install Chez Scheme first.
 
 On OSX, the easiest way to install Chez Scheme is using <cite>[Homebrew][3]</cite>, a great package manager.
 
