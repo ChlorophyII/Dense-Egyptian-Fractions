@@ -1,5 +1,5 @@
 # Dense-Egyptian-Fractions
-An algorithm for dense Egyptian fractions
+An algorithm for dense Egyptian fractions.
 [![DOI](https://zenodo.org/badge/104223004.svg)](https://zenodo.org/badge/latestdoi/104223004)
 
 ### Description
