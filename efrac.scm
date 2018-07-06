@@ -2,6 +2,7 @@
 (load "ext.so")
 (load "efrac-branch.so")
 
+					;(compile-file "primes.scm")
                                         ;(compile-file "math.scm")
                                         ;(compile-file "ext.scm")
                                         ;(compile-file "efrac-branch.scm")
