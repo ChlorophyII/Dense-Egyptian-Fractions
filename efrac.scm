@@ -15,18 +15,18 @@
       (cond [(< difference 0) #f]
             [(integer? difference) #t]
             [else (not (divide? n (denominator difference)))])))
-  (let ([M (filter (lambda (x) (divide? n x)) (br-denominators branch))]
-        [NM (filter (lambda (x) (not (divide? n x))) (br-denominators branch))])
-    (let ([sum-NM (- (br-sum branch) (sum M))]
-          [rec-sum-NM (- (br-rec-sum branch) (rec-sum M))])
-      (let ([power-set-M (power-set M)]
-            [bound (- rec-sum-NM r)])
-        (map (lambda (x)
-               (make-br (+ sum-NM (sum x))
-                        (+ rec-sum-NM (rec-sum x))
-                        (merge < NM x)))
-             (filter (lambda (y) (test y bound))
-                     power-set-M))))))
+  (let* ([M (filter (lambda (x) (divide? n x)) (br-denominators branch))]
+	 [NM (filter (lambda (x) (not (divide? n x))) (br-denominators branch))]
+	 [sum-NM (- (br-sum branch) (sum M))]
+	 [rec-sum-NM (- (br-rec-sum branch) (rec-sum M))]
+	 [power-set-M (power-set M)]
+	 [bound (- rec-sum-NM r)])
+    (map (lambda (x)
+	   (make-br (+ sum-NM (sum x))
+		    (+ rec-sum-NM (rec-sum x))
+		    (merge < NM x)))
+	 (filter (lambda (y) (test y bound))
+		 power-set-M))))
 
 (define (kill-n-br branch r n)
   (define (kill-test raw-branch-counter-part-x rec-sum-MC)
@@ -43,15 +43,15 @@
           [(or (null? N) (< aim 0) (< sum-r 0))
            '()]
           [else
-           (let ((e1 (caar N)))
+           (let ([e1 (caar N)])
              (cond
-              ((< (- sum-r e1) aim)
-               (append-e (cdar N) (recur (cdr N) (- aim e1) (- sum-r e1))))
-              (else ;(> (sum-r e1) aim)
+              [(< (- sum-r e1) aim)
+               (append-e (cdar N) (recur (cdr N) (- aim e1) (- sum-r e1)))]
+              [else ;(> (sum-r e1) aim)
                (append (append-e
                         (cdar N)
                         (recur (cdr N) (- aim e1) (- sum-r e1)))
-                       (recur (cdr N) aim (- sum-r e1))))))]))
+                       (recur (cdr N) aim (- sum-r e1)))]))]))
   (define (generate-sets-aim power-zero-pairs non-zero-pairs aim sum-r)
     (let ([rest (recur non-zero-pairs aim sum-r)])
       (cond [(and (= aim 0)); (null? rest))
@@ -80,28 +80,28 @@
                          A)))]
           [non-zero-pairs (filter (lambda (x) (> (car x) 0)) A)])
       (recur-gen-sets-aim power-zero-pairs non-zero-pairs i sum-r p)))
-  (let ([M (filter (lambda (x) (divide? n x)) (br-denominators branch))]
+  (let* ([M (filter (lambda (x) (divide? n x)) (br-denominators branch))]
         [MC (filter (lambda (x) (not (divide? n x)))
                     (br-denominators branch))]
-        [p (caar (factor n))])
-    (let ([l (apply lcm M)]
-          [sum-MC (- (br-sum branch) (sum M))]
-          [rec-sum-MC (- (br-rec-sum branch) (rec-sum M))])
-      (let ([A (map (lambda (x)
-                      (cons (modulo (/ l x) p)
-                            x))
-                    M)])
-        (let ([sum-r (sum (map car A))])
-          (let ([raw-branch-counter-part
-                 (map (lambda (x) (cons (rec-sum x) x))
-                      (generate-sets A sum-r p))])
-            (let ([branch-counter-part
-                   (filter (lambda (x) (kill-test x rec-sum-MC))
-                           raw-branch-counter-part)])
-              (map (lambda (x) (make-br (+ sum-MC (sum (cdr x)))
-                                        (+ rec-sum-MC (car x))
-                                        (merge < MC (cdr x))))
-                   branch-counter-part))))))))
+        [p (caar (factor n))]
+	[l (apply lcm M)]
+	[sum-MC (- (br-sum branch) (sum M))]
+	[rec-sum-MC (- (br-rec-sum branch) (rec-sum M))]
+	[A (map (lambda (x)
+		  (cons (modulo (/ l x) p)
+			x))
+		M)]
+	[sum-r (sum (map car A))]
+	[raw-branch-counter-part
+	 (map (lambda (x) (cons (rec-sum x) x))
+	      (generate-sets A sum-r p))]
+	[branch-counter-part
+	 (filter (lambda (x) (kill-test x rec-sum-MC))
+		 raw-branch-counter-part)])
+    (map (lambda (x) (make-br (+ sum-MC (sum (cdr x)))
+			      (+ rec-sum-MC (car x))
+			      (merge < MC (cdr x))))
+	 branch-counter-part)))
 
 (define (kill-br branch r n)
   (if (> (gcd (denominator r) n) 1)
