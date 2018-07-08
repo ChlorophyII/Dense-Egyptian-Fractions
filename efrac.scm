@@ -9,12 +9,12 @@
                                         ;(compile-file "efrac.scm")
                                         ;(load "efrac.so")
 
-(define (kill-ps-br br n)
+(define (kill-ps br n)
   (define (test y bound)
-    (let ([difference (+ (rec-sum y) bound)])
-      (cond [(< difference 0) #f]
-            [(integer? difference) #t]
-            [else (not (divide? n (denominator difference)))])))
+    (let ([diff (+ (rec-sum y) bound)])
+      (cond [(< diff 0) #f]
+            [(integer? diff) #t]
+            [else (not (divide? n (denominator diff)))])))
   (let* ([M (filter (lambda (x) (divide? n x)) (br-denoms br))]
 					; M: multiples of n
 	 [NM (filter (lambda (x) (not (divide? n x))) (br-denoms br))]
@@ -30,12 +30,12 @@
 	 (filter (lambda (y) (test y bound))
 		 power-set-M))))
 
-(define (kill-n-br br n)
+(define (kill-n br n)
   (define (kill-test raw-br-counter-part-x rec-sum-MC)
-    (let ([difference (- (+ rec-sum-MC (car raw-br-counter-part-x))
+    (let ([diff (- (+ rec-sum-MC (car raw-br-counter-part-x))
                          (br-r br))])
-      (and (not (divide? n (denominator difference)))
-           (not (< difference 0)))))
+      (and (not (divide? n (denominator diff)))
+           (not (< diff 0)))))
   (define (append-e e rest)
     (map (lambda (x)
            (merge < x (list e)))
@@ -112,17 +112,17 @@
 			      (merge < MC (cdr x))))
 	 br-counter-part)))
 
-(define (kill-br br)
+(define (kill br)
   (let ([n (greatest-prime-power
 	    (factor
 	     (denominator (br-diff br))))])
     (if (> (gcd (denominator (br-r br)) n) 1)
-	(kill-ps-br br n)
-	(kill-n-br br n))))
-;(define kill-br kill-ps-br)
+	(kill-ps br n)
+	(kill-n br n))))
+;(define kill kill-ps)
 
-(define (efrac-representation-br D r)
-  (define (recursion collector BRs)
+(define (efrac D r)
+  (define (recur collector BRs)
     (cond [(not (= (length BRs) 1))
            (display "----------------------\ncollector    branches\n")
 	   (printf "~s            ~s\n"
@@ -134,26 +134,26 @@
              (for-each
               (lambda (br)
                 (let ([sub-BRs
-                       (kill-br br)])
+                       (kill br)])
                   (for-each
                    (lambda (sub-br)
-                     (let ([difference (br-diff sub-br)])
-                       (cond [(and (integer? difference)
+                     (let ([diff (br-diff sub-br)])
+                       (cond [(and (integer? diff)
                                    (not (member sub-br collector)))
                               (set! collector (cons sub-br collector))]
-                             [(and (not (integer? difference))
+                             [(and (not (integer? diff))
                                    (not (member sub-br new-BRs)))
                               (set! new-BRs (cons sub-br new-BRs))])))
                    sub-BRs)))
               BRs)
-             (recursion collector new-BRs))]))
+             (recur collector new-BRs))]))
   (if (integer? (- (rec-sum D) r))
       (list D)
-      (recursion '() (list (make-br D r)))))
+      (recur '() (list (make-br D r)))))
 
-(define efrac efrac-representation-br)
                                         ;1, 6, 24, 65, 184,
 
 ;;(load "efrac.scm")
 ;;(time (efrac (range 1 184) 5))
 ;;(time (efrac (range 1 65) 4))
+
