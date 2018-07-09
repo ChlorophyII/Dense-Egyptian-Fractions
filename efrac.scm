@@ -1,12 +1,13 @@
 (load "math.so")
 (load "ext.so")
 (load "efrac-branch.so")
-
+(load "efq.so")
 					;(compile-file "primes.scm")
                                         ;(compile-file "math.scm")
                                         ;(compile-file "ext.scm")
                                         ;(compile-file "efrac-branch.scm")
                                         ;(compile-file "efrac.scm")
+					;(compile-file "efq.scm")
                                         ;(load "efrac.so")
 
 (define (kill-ps br n)
@@ -153,7 +154,13 @@
 
                                         ;1, 6, 24, 65, 184,
 
+
+
+
 ;;(load "efrac.scm")
 ;;(time (efrac (range 1 184) 5))
 ;;(time (efrac (range 1 65) 4))
-
+;;(efrac-m (range 1 65) 4 4)
+;;(+ 1 1)
+;;(efq-BRs g-collector)
+;;(efq-BRs g-job-queue)
