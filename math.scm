@@ -118,25 +118,33 @@
 ;;                (factor n (cdr primes-list)))))))
 
 (define (factor x)
-  (define (factor-rec x primes-list)
+  (define (factor-rec y primes-list)
     (if (null? primes-list)
-        (error
+        (errorf
          '<procedure-FACTOR>
-         (string-append
-          "\nThe number "
-          (number->string x)
-          " contains a prime factor\nthat is not in \"primes-list\".\n"))
+         "~s = ~s * ~s contains a prime factor that is not in ~s"
+	 x
+	 (/ x y)
+	 y
+	 'primes-list)
         (let ((p (car primes-list)))
-          (cond ((= x 1)
+          (cond ((= y 1)
                  '())
-                ((divide? p x)
-                 (append (list (list p (highest-power x p)))
+                ((divide? p y)
+                 (append (list (list p (highest-power y p)))
                          (factor-rec
-                          (/ x (expt p (highest-power x p)))
+                          (/ y (expt p (highest-power y p)))
                           (cdr primes-list))))
                 (else
-                 (factor-rec x (cdr primes-list)))))))
-  (factor-rec x primes-list))
+                 (factor-rec y (cdr primes-list)))))))
+  (cond [(or (not (integer? x))
+	     (<= x 0))
+	 (errorf
+	  '<procedure-FACTOR>
+	  "Invalid input: ~s"
+	  x)]
+	[(= x 1) '((1 1))]
+	[else (factor-rec x primes-list)]))
 
 (define (prime-divisors x)
   (map car (factor x)))
