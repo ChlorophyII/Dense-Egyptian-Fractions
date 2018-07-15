@@ -15,7 +15,7 @@
 
 (define signal-last-thread
   (lambda ()
-    (system "sleep 1");TODO: may replace 1 by 0.1
+    (system "sleep 0.1");TODO: may replace 1 by 0.1
     (condition-signal (efq-ready g-job-queue))))
 
 (define hungry+1!
@@ -28,6 +28,7 @@
 		  (cond [(= (controller-hungry c)
 			    (controller-limit c))
 			 (set! die? #t)
+			 "time to die\n"
 			 (condition-signal
 			  (efq-ready g-job-queue))
 			 (fork-thread signal-last-thread)])))))
@@ -52,7 +53,7 @@
        (if branch
 	   (new (list branch) 1 (make-mutex) (make-condition))
 	   (new '() 0 (make-mutex) (make-condition)))))))
-;; NOT checked 
+
 (define efq-dequeue!
   (lambda (q)
     (with-mutex (efq-mutex q)
@@ -64,8 +65,8 @@
 		    (hungry-1!)
 		    (cond [die?
 			   (condition-signal (efq-ready q))
-			   #f])
-		    (loop)]
+			   #f]
+			  [else (loop)])]
 		   [else
 		    (let ([br (car (efq-BRs q))])
 		      (efq-BRs-set! q (cdr (efq-BRs q)))
@@ -77,10 +78,14 @@
     (with-mutex (efq-mutex q)
 		(efq-BRs-set!
 		 q
-		 (sort (lambda (br1 br2)
-			 (> (br-rec-sum br1)
-			    (br-rec-sum br2)))
-		       (append BRs (efq-BRs q))))
+		 ;; (sort (lambda (br1 br2)
+		 ;; 	 (> (br-rec-sum br1)
+		 ;; 	    (br-rec-sum br2)))
+		 ;;       (append BRs (efq-BRs q))))
+		 (merge (lambda (br1 br2)
+			  (> (br-rec-sum br1)
+			     (br-rec-sum br2)))
+			BRs (efq-BRs q)));;BRs and efq-BRs must be sorted
 		(efq-length-set!
 		 q
 		 (+ (efq-length q) (length BRs)))
@@ -102,7 +107,7 @@
 			      (efq-enqueue! SOLs g-collector)
 			      (printf "~s solutions found\n" (length SOLs))
 			      (let ([new-BRs
-				     (filter (lambda (bf)
+				     (filter (lambda (br)
 					       (not (integer? (br-diff br))))
 					     sub-BRs)])
 				(efq-enqueue! new-BRs g-job-queue))]
@@ -113,12 +118,14 @@
 
 (define (efrac-m D r nk)
   (set! die? #f)
+  (printf "die? is set as ~s\n" die?)
   (set! g-controller (make-controller nk))
+  (printf "controller-limit ~s\n" (controller-limit g-controller))
   (set! g-job-queue (make-efq (make-br D r)))
   (set! g-collector (make-efq #f))
   (do ([nk nk (- nk 1)])
       ((<= nk 0))
     (fork-thread (make-killer nk)))
-  (printf "finished?"))
+  (printf "finished scheduling\n"))
 
 ;;(load "efq.scm")

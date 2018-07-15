@@ -4,20 +4,25 @@
    (immutable rec-sum)
    (immutable r)
    (immutable diff)
+   (immutable gpp);;greatest prime power of denominator of diff
    (immutable denoms))
   (protocol
    (lambda (new)
-     (case-lambda [(denoms r)
-		   (new (sum denoms)
-			(rec-sum denoms)
-			r
-			(- (rec-sum denoms) r)
-			denoms)]
-		  [(sum rec-sum r denoms)
+     (case-lambda [(sum rec-sum r gpp denoms)
 		   (new sum
 			rec-sum
 			r
 			(- rec-sum r)
+			gpp
+			denoms)]
+		  [(denoms r)
+		   (new (sum denoms)
+			(rec-sum denoms)
+			r
+			(- (rec-sum denoms) r)
+			(greatest-prime-power
+			 (factor (denominator
+				  (- (rec-sum denoms) r))))
 			denoms)]))))
 
 ;; (define make-br

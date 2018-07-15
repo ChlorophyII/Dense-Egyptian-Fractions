@@ -9,5 +9,4 @@
        '<procedure-SET-CADR!>
        "\nFirst argument is not a list with at least two elements")))
 
-
-
+(define verbose? #f)
