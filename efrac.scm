@@ -154,16 +154,6 @@
                        (kill br)])
 		  (set! collector (append collector (car SOLs-BRs)))
 		  (set! new-BRs (append new-BRs (cdr SOLs-BRs)))))
-              ;;      (for-each
-              ;;       (lambda (sub-br)
-              ;;         (let ([diff (br-diff sub-br)])
-              ;;           (cond [(and (integer? diff)
-              ;;                       (not (member sub-br collector)))
-              ;;                  (set! collector (cons sub-br collector))]
-              ;;                 [(and (not (integer? diff))
-              ;;                       (not (member sub-br new-BRs)))
-              ;;                  (set! new-BRs (cons sub-br new-BRs))])))
-              ;;       sub-BRs)))
               BRs)
              (recur collector new-BRs))]))
   (if (integer? (- (rec-sum D) r))

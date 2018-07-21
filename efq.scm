@@ -78,10 +78,6 @@
     (with-mutex (efq-mutex q)
 		(efq-BRs-set!
 		 q
-		 ;; (sort (lambda (br1 br2)
-		 ;; 	 (> (br-rec-sum br1)
-		 ;; 	    (br-rec-sum br2)))
-		 ;;       (append BRs (efq-BRs q))))
 		 (merge (lambda (br1 br2)
 			  (> (br-rec-sum br1)
 			     (br-rec-sum br2)))
@@ -99,20 +95,10 @@
 	       (printf "killer ~s dying\n" n)
 	       (let ([br (efq-dequeue! g-job-queue)])
 		 (if br
-		     (let* ([sub-BRs (kill br)]
-			    [SOLs (filter (lambda (br)
-					    (integer? (br-diff br)))
-					  sub-BRs)])
-		       (cond [(> (length SOLs) 0)
-			      (efq-enqueue! SOLs g-collector)
-			      (printf "~s solutions found\n" (length SOLs))
-			      (let ([new-BRs
-				     (filter (lambda (br)
-					       (not (integer? (br-diff br))))
-					     sub-BRs)])
-				(efq-enqueue! new-BRs g-job-queue))]
-			     [else
-			      (efq-enqueue! sub-BRs g-job-queue)])
+		     (let* ([SOLs-BRs (kill br)])
+;		       (printf "~s solutions found\n" (length (car SOLs-BRs)))
+		       (efq-enqueue! (car SOLs-BRs) g-collector)
+		       (efq-enqueue! (cdr SOLs-BRs) g-job-queue)
 		       (killer))
 		     (printf "killer ~s dying\n" n))))))))
 
@@ -129,3 +115,5 @@
   (printf "finished scheduling\n"))
 
 ;;(load "efq.scm")
+;;g-collector
+;;g-job-queue
