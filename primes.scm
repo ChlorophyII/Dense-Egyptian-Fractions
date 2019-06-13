@@ -22230,14 +22230,23 @@
 
 (define prime?
   (lambda (x)
-    (cond ((= (mod x 2) 0)
-           #f)
-          ((> x 1299827)
+    (cond [(not (integer? x))
+	   (error
+	    '<procedure-PRIME?>
+	    (format "\nThe number ~s is not an integer." x)
+	    ;; (string-append
+	    ;;  "\nThe number "
+	    ;;  (number->string x)
+	    ;;  " is not an integer\n")
+)]
+          [(or (negative? x) (> x 1299827))
            (error
             '<procedure-PRIME?>
-            (string-append
-             "\nThe number "
-             (number->string x)
-             " is out of range 0 - 1299827\n")))
+	    (format "\nThe number ~s is out of range 0 - 1299827." x)
+            ;; (string-append
+            ;;  "\nThe number "
+            ;;  (number->string x)
+            ;;  " is out of range 0 - 1299827\n")
+	    )]
           (else
            (hashtable-ref primes-ht x #f)))))
