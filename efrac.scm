@@ -143,11 +143,48 @@
 	(recur SOLUTIONs new-BRs))]))
   (recur '() (list (make-br D r))))
 
+(define (efrac-dfs D r)
+  (define (recur BRs)
+    (cond [(null? BRs) '()]
+	  [else
+	   (let* ([SOLs-BRs (kill (car BRs))]
+		  [SOLs (car SOLs-BRs)]
+		  [new-BRs (cdr SOLs-BRs)])
+	     (cond [(null? SOLs)
+		    (recur (append new-BRs (cdr BRs)))]
+		   [else
+		    (map br-denoms-sol (list (car SOLs)))]))]))
+  (recur (list (make-br D r))))
+
+(define (efrac-dfss D r)
+  (define sol '()) 
+  (define progress 0)
+  (define (dig br num-BRs-above treasure-map)
+    (cond [(null? sol)
+	   (let* ([SOLs-BRs (kill br)]
+		  [SOLs (car SOLs-BRs)]
+		  [new-BRs (cdr SOLs-BRs)]
+		  [length-new-BRs (length new-BRs)])
+	     (let ([num-BRs (* num-BRs-above length-new-BRs)]
+		   [new-treasure-map (if (> length-new-BRs 1)
+					 (cons length-new-BRs treasure-map)
+					 treasure-map)])
+	       (cond [(null? SOLs)
+		      (for-each (lambda (br) (dig br num-BRs new-treasure-map)) new-BRs)
+		      (cond [(and verbose? (null? new-BRs))
+			     (set! progress (+ progress
+					       (reciprocal num-BRs-above)))
+			     (printf "progress: ~12,8f%  ~s " (* 100 progress)
+				     (time-utc->date (current-time)))
+			     (printf "~s\n" new-treasure-map)])]
+		     [else (set! sol (map br-denoms-sol (list (car SOLs))))]
+		     )))]
+	  ))
+  (dig (make-br D r) 1 '())
+  sol)
+
+
                                         ;1, 6, 24, 65, 184,
-
-
-
-
 ;;(load "efrac.scm")
 ;;(time (set! a (efrac (range 1 24) 3)))
 ;;(time (set! b (efrac (range 1 65) 4)))
