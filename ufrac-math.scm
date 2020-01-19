@@ -1,4 +1,5 @@
-(load "primes.scm")
+(guard (x (load "ufrac-primes.so"))
+       (load "ufrac-primes.scm"))
 
 (define id (lambda (x) x))
 

@@ -5,6 +5,7 @@
 !ufrac-test-kill.scm
 !ufrac-primes.scm
 !ufrac-math.scm
+!ufrac-compile.scm
 !ufrac-branch.scm
 !README.md
 !primes.txt

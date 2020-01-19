@@ -1,10 +1,8 @@
-(load "math.so")
-(load "efrac-branch.so")
-;; (compile-file "primes.scm")
-;; (compile-file "math.scm")
-;; (compile-file "efrac-branch.scm")
-;; (compile-file "efrac.scm")
-;; (load "efrac.scm")
+(guard (x (load "ufrac-math.so")
+	  (load "ufrac-branch.so"))
+       (load "ufrac-math.scm")
+       (load "ufrac-branch.scm"))
+
 (set! verbose? #f)
 
 (define (kill br)
@@ -113,7 +111,7 @@
 					   br)))
 			      (remp solution? reduced-SUBSETs-M))))))])))
 
-(define (efrac D r)
+(define (ufrac D r)
   (define (recur SOLUTIONs BRs)
     (cond [(and verbose? (not (= (length BRs) 1)))
 	   (printf "~10@s solutions ~10@s branches  ~s\n"
@@ -143,7 +141,7 @@
 	(recur SOLUTIONs new-BRs))]))
   (recur '() (list (make-br D r))))
 
-(define (efrac-dfs D r)
+(define (ufrac-dfs D r)
   (define (recur BRs)
     (cond [(null? BRs) '()]
 	  [else
@@ -156,7 +154,7 @@
 		    (map br-denoms-sol (list (car SOLs)))]))]))
   (recur (list (make-br D r))))
 
-(define (efrac-dfss D r)
+(define (ufrac-dfss D r)
   (define sol '()) 
   (define progress 0)
   (define (dig br num-BRs-above treasure-map)
@@ -170,7 +168,8 @@
 					 (cons length-new-BRs treasure-map)
 					 treasure-map)])
 	       (cond [(null? SOLs)
-		      (for-each (lambda (br) (dig br num-BRs new-treasure-map)) new-BRs)
+		      (for-each (lambda (br) (dig br num-BRs new-treasure-map))
+				new-BRs)
 		      (cond [(and verbose? (null? new-BRs))
 			     (set! progress (+ progress
 					       (reciprocal num-BRs-above)))
@@ -182,13 +181,3 @@
 	  ))
   (dig (make-br D r) 1 '())
   sol)
-
-
-                                        ;1, 6, 24, 65, 184,
-;;(load "efrac.scm")
-;;(time (set! a (efrac (range 1 24) 3)))
-;;(time (set! b (efrac (range 1 65) 4)))
-;;(time (efrac (range 1 183) 5))
-;;(time (set! c (efrac (range 1 184) 5)))
-;;(time (set! d (efrac (range 1 35) 2/7)))
-;;(time (efrac (range 1 468) 6))
