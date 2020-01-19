@@ -1,1 +1,11 @@
-.DS_Store
+# Ignore everything in the root except the following
+/*
+!.gitignore
+!ufrac.scm
+!ufrac-test-kill.scm
+!ufrac-primes.scm
+!ufrac-math.scm
+!ufrac-branch.scm
+!README.md
+!primes.txt
+!LICENSE.txt
