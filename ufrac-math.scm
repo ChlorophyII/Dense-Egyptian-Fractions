@@ -217,6 +217,9 @@
   (recur (sort < s1) (sort < s2)))
 
 (define (sets-intersection sets)
+  (define (length>=2? l)
+    (and (pair? l)
+         (not (null? (cdr l)))))
   (if (length>=2? sets)
       (set-intersection (car sets)
                         (sets-intersection (cdr sets)))
