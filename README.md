@@ -16,7 +16,15 @@ This algorithm can possibly be used to find the densest Egyptian fraction repres
         - [Advanced Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#advanced-examples)
     - [Python Interface](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#python-interface)
         - [Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#examples)
-
+- [Conjecture](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#conjecture)
+    - [Statement](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#statement)
+    - [Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#examples)
+        - [The way to choose a desired c](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#the-way-to-choose-a-desired-c)
+        - [Different values of c leading to different results](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#different-values-of-c-leading-to-different-results)
+        - [Better c leading to better performance](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#better-c-leading-to-better-performance)
+    - [Finding Witnesses](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#finding-witnesses)
+    - [Results](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#results)
+        
 ## Description
 The program computes unit fraction representations of a given positive rational number within a given set. The idea is from <cite>[Dense Egyptian Fractions][1]</cite>.
 

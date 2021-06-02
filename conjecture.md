@@ -5,17 +5,17 @@
 This conjecture has been verified for integers up to 6000. Now we describe our strategy for looking for witnesses, i.e., representations that verify the conjecture for certain integers. Given an integer d that is larger than 4, we look for representations where the largest denominator is of the form d\*c for some c. For d ≤ 20, we choose d by hand. For d > 20,  we choose a candidate c within a range, say, 1 < c ≤ 10000, so that the largest prime power of the denominator of 1-1/d-1/(d\*c) can be minimized. 
 
 #### Examples
-##### How we choose a desired c
+##### The way to choose a desired c
 Suppose d = 54. We run `(sld-choose-c 54 10)` to get a c that is smaller than 10. It returns 2. We have 1-1/54-1/(54 \* 2) = 35/36, and the largest prime power in 36 = 4 \* 9 is 9. If we run `(sld-choose-c 54 100)`, we will get 35 instead. We have 1-1/54-1/(54 \* 35) = 103/105. This time, 105 = 3 \* 5 \* 7. Since 7 is smaller than 9, it is considered a better choice when we enlarge our range to 100.
 
-##### Different values of c lead to different results
+##### Different values of c leading to different results
 Continuing our previous example, `(sld 54 2)` gives us  
 ```(2 3 9 36 54 108)```,  
 that is, 1/2+1/3+1/9+1/36+1/54+1/108=1. Here `sld` stands for second largest denominator. If we run `(sld 54 35)`, we will have  
 ```(2 5 7 14 15 54 1890)```  
 instead. Both verifies the conjecture for d=54.
 
-##### A properly chosen c can drastically improve the performance
+##### Better c leading to better performance
 Consider the case when d = 1453. `(sld-choose-c 1453 10000)` yields 2905, while `(sld-choose-c 1453 100000)` returns 24700. If we use c = 2905 and run `(sld 1453 2905)`, it returns  
 ```(2 4 7 14 83 105 166 332 415 498 1453 4220965)```  
 in around 65 seconds in our test. However, running `(sld 1453 24700)` returns  
@@ -23,7 +23,8 @@ in around 65 seconds in our test. However, running `(sld 1453 24700)` returns
 in 0.002 seconds.
 
 Therefore, if the program runs too slow or uses too much memory, we may increase the bound so that there can be a better choice of c.
-#### Finding witnesses
+
+#### Finding Witnesses
 The following script prints witnesses for 21 ≤ d ≤ 1000.
 
 ```scheme
