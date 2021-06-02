@@ -2,7 +2,20 @@
 An algorithm for computing <cite>[unit fraction representations][4]</cite>, hence also <cite>[Egyptian fraction representations][5]</cite>.
 <cite>[![DOI](https://zenodo.org/badge/104223004.svg)][6]</cite>
 
-This algorithm can possibly be used to find the densest Egyptian fraction representations, or verify related conjectures. For example, Greg Martin conjectured that every integer greater than 4 can be the second largest denominator in an Egyptian fraction representation of 1. We have verified this conjecture for integers up to 6000. See [Conjecture](./conjecture.md) for details.
+This algorithm can possibly be used to find the densest Egyptian fraction representations, or verify related conjectures. For example, Greg Martin conjectured that every integer greater than 4 can be the second largest denominator in an Egyptian fraction representation of 1. We have verified this conjecture for integers up to 6000. See [conjecture.md](./conjecture.md) for details.
+
+## Table of Contents
+- [Description](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#description)
+- [Installation](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#installation)
+    - [Install Chez Scheme](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#install-chez-scheme)
+    - [Install Dense-Egyptian-Fractions](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#install-dense-egyptian-fractions)
+    - [Install Python 3 (optional)](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#install-python-3-optional)
+- [Usage](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#usage)
+    - [Chez Scheme Interface](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#chez-scheme-interface)
+        - [Basic Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#basic-examples)
+        - [Advanced Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#advanced-examples)
+    - [Python Interface](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#python-interface)
+        - [Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#examples)
 
 ## Description
 The program computes unit fraction representations of a given positive rational number within a given set. The idea is from <cite>[Dense Egyptian Fractions][1]</cite>.
