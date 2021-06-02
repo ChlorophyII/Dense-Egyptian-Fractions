@@ -1,7 +1,9 @@
 (guard (x (load "ufrac-math.so")
-	  (load "ufrac-branch.so"))
+	  (load "ufrac-branch.so")
+	  (load "ufrac-conjecture.so"))
        (load "ufrac-math.scm")
-       (load "ufrac-branch.scm"))
+       (load "ufrac-branch.scm")
+       (load "ufrac-conjecture.scm"))
 
 (set! verbose? #f)
 
