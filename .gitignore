@@ -10,5 +10,8 @@
 !ufrac-branch.scm
 !ufrac-conjecture.scm
 !README.md
+!conjecture.md
+!conjecture_witnesses.md
+!conjecture_raw_outputs.txt
 !primes.txt
 !LICENSE.txt
