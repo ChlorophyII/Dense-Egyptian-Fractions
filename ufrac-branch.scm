@@ -153,7 +153,7 @@
 	       (cond [(zero? diff) (merge < (br-rsvd br) (cdr (br-denoms br)))]
 		     [else #f])))))
 
-(define (display-br br)
+(define (br-display br)
   (printf "                                       original r: ~s\n"
 	  (br-original-r br))
   (printf "                                                r: ~s\n"
