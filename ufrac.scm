@@ -104,15 +104,18 @@
 					   NM
 					   br)))
 			      (filter solution? reduced-SUBSETs-M))
-			 (map (lambda (x) ; new-BRs
-				(let ([subset-M (cdr x)])
-				  (make-br sum-NM
-					   rs-NM
-					   rs-M
-					   subset-M
-					   NM
-					   br)))
-			      (remp solution? reduced-SUBSETs-M))))))])))
+			 (remp (lambda (br) (or (negative? (br-r br))
+						(negative? (br-diff br))))
+			       ;; remove impossible branches produced by br-reduce
+			  (map (lambda (x) ; new-BRs
+				 (let ([subset-M (cdr x)])
+				   (br-reduce (make-br sum-NM
+						       rs-NM
+						       rs-M
+						       subset-M
+						       NM
+						       br))))
+			       (remp solution? reduced-SUBSETs-M)))))))])))
 
 (define (ufrac D r)
   (define (recur SOLUTIONs BRs)
