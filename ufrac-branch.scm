@@ -146,7 +146,7 @@
 	       (br-original-r br) ; original-r
 	       diff ; diff
 	       (cond [(integer? diff) #f]
-		     [else (caar (factor (car (br-denoms br))))]) ; gpp
+		     [else (greatest-prime-power (factor d))]) ; gpp
 	       (br-rs-rsvd br)
 	       (br-rsvd br)
 	       (cdr (br-denoms br))
