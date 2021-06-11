@@ -16,7 +16,7 @@
 		   (let* ([rs-subset-M (rec-sum subset-M)]
 			  [new-r (- (br-r parent) rs-subset-M)] 
 			  [new-diff (- rs-NM new-r)]
-			  [new-rsvd (merge < subset-M (br-rsvd parent))])
+			  [new-rsvd (append subset-M (br-rsvd parent))])
 		     (new sum-NM ; sum-denoms
 			  rs-NM ; rs-denoms
 			  new-r ; r
@@ -29,8 +29,8 @@
 			  (+ rs-subset-M (br-rs-rsvd parent)) ;rs-rsvd
 			  new-rsvd ; rsvd
 			  NM ; denoms
-			  (cond [(zero? new-diff) (merge < new-rsvd NM)]
-				[(zero? new-r) new-rsvd]
+			  (cond [(zero? new-diff) (sort < (append new-rsvd NM))]
+				[(zero? new-r) (sort < new-rsvd)]
 				[else #f]) ; denoms-sol
 			  ))]
 		  [(denoms r)
@@ -69,11 +69,11 @@
 	       (br-original-r br-b))
        (equal? (br-rs-rsvd br-a)
 	       (br-rs-rsvd br-b))
-       (equal? (br-rsvd br-a) ; rsvd must be sorted
-	       (br-rsvd br-b))
-       (equal? (br-denoms br-a) ; denoms must be sorted
-	       (br-denoms br-b))
-       (equal? (br-denoms-sol br-a)
+       (equal? (sort < (br-rsvd br-a)) ; rsvd must be sorted
+	       (sort < (br-rsvd br-b)))
+       (equal? (sort < (br-denoms br-a)) ; denoms must be sorted
+	       (sort < (br-denoms br-b)))
+       (equal? ((br-denoms-sol br-a)) ; br-denoms-sol is already sorted
 	       (br-denoms-sol br-b))))
 
 (define (br-equal-as-sol? br-a br-b)
@@ -119,10 +119,10 @@
 	       diff ; diff
 	       #f ; gpp
 	       (+ (br-rs-rsvd br) (/ 1 d)) ; rs-rsvd
-	       (merge < (list d) (br-rsvd br)) ; rsvd
+	       (append (list d) (br-rsvd br)) ; rsvd
 	       (cdr (br-denoms br)) ; denoms
 	       (if (zero? r)
-		   (merge < (list d) (br-rsvd br))
+		   (sort < (append (list d) (br-rsvd br)))
 		   #f) ; denoms-sol
 	       ))))
 
@@ -150,8 +150,9 @@
 	       (br-rs-rsvd br)
 	       (br-rsvd br)
 	       (cdr (br-denoms br))
-	       (cond [(zero? diff) (merge < (br-rsvd br) (cdr (br-denoms br)))]
-		     [else #f])))))
+	       (if (zero? diff)
+		   (sort < (append (br-rsvd br) (cdr (br-denoms br))))
+		   #f)))))
 
 (define (br-reduce br)
   ;; This function recursively
@@ -197,8 +198,9 @@
 	     (rec-sum new-rsvd)
 	     new-rsvd
 	     new-denoms
-	     (cond [(zero? new-diff) (merge < new-rsvd new-denoms)]
-		   [(zero? new-r) new-rsvd]
+	     (cond [(zero? new-diff)
+		    (sort < (append new-rsvd new-denoms))]
+		   [(zero? new-r) (sort < new-rsvd)]
 		   [else #f])
 	     )))
 

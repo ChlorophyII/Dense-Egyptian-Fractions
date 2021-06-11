@@ -12,7 +12,7 @@
   (define (knapsack A aim sum-NUMs)
     (define (for-each-insert e LISTs)
       (map (lambda (l)
-             (merge < l (list e)))
+             (append l (list e)))
 	   LISTs))
     (cond [(zero? aim) '(())] ; There is a solution
 	  [(or (null? A) (negative? aim)) '()] ; There is no solution
