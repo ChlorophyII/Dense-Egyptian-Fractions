@@ -117,6 +117,45 @@
 						       br))))
 			       (remp solution? reduced-SUBSETs-M)))))))])))
 
+(define (ufrac D r)
+  (define SOLUTIONs '())
+  (define (distinct-denoms) #f)
+  (define (recur BRs n)
+    (cond [(null? BRs) '()]
+	  [else
+	   (let* ([SOLs-BRs (kill (car BRs))]
+		  [new-BRs (cdr SOLs-BRs)]
+		  [next-BRs (append new-BRs (cdr BRs))] ; order is important
+		  [n+1 (add1 n)])
+	     (if distinct-denoms
+		 (set! SOLUTIONs (append (car SOLs-BRs) SOLUTIONs))
+		 (for-each ; for each new sol
+		  (lambda (new-sol)
+		    (if (null?
+			 (filter
+			  (lambda (old-sol) (br-equal-as-sol? new-sol old-sol))
+			  SOLUTIONs)) ; consider (ufrac '(2 2 2 2) 1)
+			(set! SOLUTIONs (cons new-sol SOLUTIONs))))
+		  (car SOLs-BRs)))
+	     (cond [(and verbose? (divide? print-frequency n+1))
+		    (printf "killed branches: ~12s  branches: ~12s  solutions: ~10s  ~s \n"
+			    n+1
+			    (length BRs)
+			    (length SOLUTIONs)
+			    (time-utc->date (current-time)))
+		    (cond [(not (null? next-BRs))
+			   (br-display (car next-BRs))
+			   (newline)])])
+	     (recur next-BRs (add1 n)))]))
+  (let ([first-br (br-reduce (make-br D r))])
+    (set! distinct-denoms (set-distinct-numbers? (br-denoms first-br)))
+    (recur (list first-br) 0))
+  (if verbose?
+      (printf "Found ~s representations of ~s.\n"
+	      (length SOLUTIONs)
+	      r))
+  (map br-denoms-sol SOLUTIONs))
+
 (define (ufrac-bfs D r)
   (define (distinct-denoms) #f)
   (define (recur SOLUTIONs BRs)
