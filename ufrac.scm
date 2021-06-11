@@ -156,41 +156,6 @@
 	      r))
   (map br-denoms-sol SOLUTIONs))
 
-(define (ufrac-bfs D r)
-  (define (distinct-denoms) #f)
-  (define (recur SOLUTIONs BRs)
-    (cond [(and verbose? (not (= (length BRs) 1)))
-	   (printf "~10@s solutions ~10@s branches  ~s\n"
-		   (length SOLUTIONs)
-		   (length BRs)
-		   (time-utc->date (current-time)))])
-    (cond ;[(not (null? SOLUTIONs)) (map br-denoms-sol SOLUTIONs)]
-     [(null? BRs) (map br-denoms-sol SOLUTIONs)]
-     [else
-      (let ([new-BRs '()])
-	(for-each ; for each br in BRs
-	 (lambda (br)
-	   (let ([SOLs-BRs (kill br)])
-	     (if distinct-denoms
-		 (set! SOLUTIONs (append (car SOLs-BRs) SOLUTIONs))
-		 (for-each ; for each new sol
-		  (lambda (new-sol)
-		    (if (null?
-			 (filter
-			  (lambda (old-sol) (br-equal-as-sol? new-sol old-sol))
-			  SOLUTIONs)) ; consider (ufrac-bfs '(2 2 2 2) 1)
-			(set! SOLUTIONs (cons new-sol SOLUTIONs))))
-		  (car SOLs-BRs)))
-	     (for-each ; for each new br
-	      (lambda (new-br)
-		(set! new-BRs (cons new-br new-BRs)))
-	      (cdr SOLs-BRs))))
-	 BRs)
-	(recur SOLUTIONs new-BRs))]))
-  (let ([first-br (br-reduce (make-br D r))])
-    (set! distinct-denoms (set-distinct-numbers? (br-denoms first-br)))
-    (recur '() (list first-br))))
-
 (define (ufrac-dfs D r)
   (define (recur BRs n)
     (cond [(null? BRs) '()]
@@ -250,3 +215,38 @@
   (if (null? sol)
 	#f
 	(car sol)))
+
+(define (ufrac-bfs D r)
+  (define (distinct-denoms) #f)
+  (define (recur SOLUTIONs BRs)
+    (cond [(and verbose? (not (= (length BRs) 1)))
+	   (printf "~10@s solutions ~10@s branches  ~s\n"
+		   (length SOLUTIONs)
+		   (length BRs)
+		   (time-utc->date (current-time)))])
+    (cond ;[(not (null? SOLUTIONs)) (map br-denoms-sol SOLUTIONs)]
+     [(null? BRs) (map br-denoms-sol SOLUTIONs)]
+     [else
+      (let ([new-BRs '()])
+	(for-each ; for each br in BRs
+	 (lambda (br)
+	   (let ([SOLs-BRs (kill br)])
+	     (if distinct-denoms
+		 (set! SOLUTIONs (append (car SOLs-BRs) SOLUTIONs))
+		 (for-each ; for each new sol
+		  (lambda (new-sol)
+		    (if (null?
+			 (filter
+			  (lambda (old-sol) (br-equal-as-sol? new-sol old-sol))
+			  SOLUTIONs)) ; consider (ufrac-bfs '(2 2 2 2) 1)
+			(set! SOLUTIONs (cons new-sol SOLUTIONs))))
+		  (car SOLs-BRs)))
+	     (for-each ; for each new br
+	      (lambda (new-br)
+		(set! new-BRs (cons new-br new-BRs)))
+	      (cdr SOLs-BRs))))
+	 BRs)
+	(recur SOLUTIONs new-BRs))]))
+  (let ([first-br (br-reduce (make-br D r))])
+    (set! distinct-denoms (set-distinct-numbers? (br-denoms first-br)))
+    (recur '() (list first-br))))
