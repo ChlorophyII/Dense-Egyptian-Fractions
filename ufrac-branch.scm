@@ -29,9 +29,9 @@
 			  (+ rs-subset-M (br-rs-rsvd parent)) ;rs-rsvd
 			  new-rsvd ; rsvd
 			  NM ; denoms
-			  (if (zero? new-diff)
-			      (merge < new-rsvd NM)
-			      #f) ; denoms-sol
+			  (cond [(zero? new-diff) (merge < new-rsvd NM)]
+				[(zero? new-r) new-rsvd]
+				[else #f]) ; denoms-sol
 			  ))]
 		  [(denoms r)
 		   (let* ([rs-denoms (rec-sum denoms)]
