@@ -154,23 +154,23 @@
 		     [else #f])))))
 
 (define (display-br br)
-  (printf "original r:                                        ~s\n"
+  (printf "                                       original r: ~s\n"
 	  (br-original-r br))
-  (printf "r:                                                 ~s\n"
+  (printf "                                                r: ~s\n"
 	  (br-r br))
-  (printf "sum of denominators:                               ~s\n"
+  (printf "                              sum of denominators: ~s\n"
 	  (br-sum-denoms br))
-  (printf "reciprocal sum of denominators:                    ~s\n"
+  (printf "                   reciprocal sum of denominators: ~s\n"
 	  (br-rs-denoms br))
-  (printf "difference(reciprocal sum of denominators - r):    ~s or ~10f\n"
+  (printf "  difference (reciprocal sum of denominators - r): ~s or ~10f\n"
 	  (br-diff br) (br-diff br))
-  (printf "factorization of denominator of difference:        ~s\n"
+  (printf "       factorization of denominator of difference: ~s\n"
 	  (factor (denominator (br-diff br))))
   (printf "greatest prime power in denominator of difference: ~s\n"
 	  (br-gpp br))
-  (printf "reserved denominators:                             ~s\n"
+  (printf "                            reserved denominators: ~s\n"
 	  (br-rsvd br))
-  (printf "remaining denominators:                            ~s\n"
+  (printf "                           remaining denominators: ~s\n"
 	  (br-denoms br))
-  (printf "solution to r:                                     ~s\n"
+  (printf "                                    solution to r: ~s\n"
 	  (br-denoms-sol br)))
