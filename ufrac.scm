@@ -117,7 +117,7 @@
 						       br))))
 			       (remp solution? reduced-SUBSETs-M)))))))])))
 
-(define (ufrac D r)
+(define (ufrac-bfs D r)
   (define (distinct-denoms) #f)
   (define (recur SOLUTIONs BRs)
     (cond [(and verbose? (not (= (length BRs) 1)))
