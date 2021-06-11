@@ -6,6 +6,7 @@
        (load "ufrac-conjecture.scm"))
 
 (set! verbose? #f)
+(set! print-frequency 1000)
 
 (define (kill br)
   (define (knapsack A aim sum-NUMs)
@@ -144,17 +145,27 @@
   (recur '() (list (make-br D r))))
 
 (define (ufrac-dfs D r)
-  (define (recur BRs)
+  (define (recur BRs n)
     (cond [(null? BRs) '()]
 	  [else
 	   (let* ([SOLs-BRs (kill (car BRs))]
 		  [SOLs (car SOLs-BRs)]
 		  [new-BRs (cdr SOLs-BRs)])
 	     (cond [(null? SOLs)
-		    (recur (append new-BRs (cdr BRs)))]
+		    (let ([next-BRs (append new-BRs (cdr BRs))]
+			  [n+1 (add1 n)])
+		      (cond [(and verbose? (divide? print-frequency n+1))
+			     (printf "killed branches: ~d size of BRs: ~d ~s \n"
+				     n+1
+				     (length BRs)
+				     (time-utc->date (current-time)))
+			     (cond [(not (null? next-BRs))
+				    (br-display (car next-BRs))
+				    (newline)])])
+		      (recur next-BRs (add1 n)))]
 		   [else
 		    (map br-denoms-sol (list (car SOLs)))]))]))
-  (let ([sol (recur (list (make-br D r)))])
+  (let ([sol (recur (list (make-br D r)) 0)])
     (if (null? sol)
 	#f
 	(car sol))))
