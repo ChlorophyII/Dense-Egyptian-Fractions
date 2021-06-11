@@ -153,6 +153,53 @@
 	       (cond [(zero? diff) (merge < (br-rsvd br) (cdr (br-denoms br)))]
 		     [else #f])))))
 
+(define (br-reduce br)
+  ;; This function recursively
+  ;; discards denominators whose reciprocals are greater than r
+  ;; and reserves denominators whose reciprocals are greater than diff.
+  (define (recur r diff denoms rsvd)
+    (cond [(or (<= r 0) (<= diff 0))
+	   (list r diff denoms rsvd)]
+	  [else
+	   (let ([denoms<1/r (filter (lambda (x) (< x (/ 1 r))) denoms)]
+		 [denoms<1/diff (filter (lambda (x) (< x (/ 1 diff))) denoms)])
+	     (cond [(and (null? denoms<1/r) (null? denoms<1/diff))
+		    (list r diff denoms rsvd)]
+		   [(null? denoms<1/diff) ; denoms<1/r is not null and we need to discard them
+		    (recur r
+			   (- diff (rec-sum denoms<1/r))
+			   (remp (lambda (x) (< x (/ 1 r))) denoms)
+			   rsvd)]
+		   [else ; denoms<1/diff is not null and we need to reserve them
+		    (recur (- r (rec-sum denoms<1/diff))
+			   diff
+			   (remp (lambda (x) (< x (/ 1 diff))) denoms)
+			   (append rsvd denoms<1/diff))]))]))
+  (let* ([result (recur (br-r br)
+			(br-diff br)
+			(br-denoms br)
+			(br-rsvd br))]
+	 [new-r (car result)]
+	 [new-diff (cadr result)]
+	 [new-denoms (caddr result)]
+	 [new-rsvd (cadddr result)])
+    (make-br (sum new-denoms)
+	     (rec-sum new-denoms)
+	     new-r
+	     (br-original-r br)
+	     new-diff
+	     (cond [(integer? new-diff) #f]
+		   [else
+		    (greatest-prime-power
+		     (factor (denominator new-diff)))]) ;gpp
+	     (rec-sum new-rsvd)
+	     new-rsvd
+	     new-denoms
+	     (cond [(zero? new-diff) (merge < new-rsvd new-denoms)]
+		   [(zero? new-r) new-rsvd]
+		   [else #f])
+	     )))
+
 (define (br-display br)
   (printf "                                       original r: ~s\n"
 	  (br-original-r br))
