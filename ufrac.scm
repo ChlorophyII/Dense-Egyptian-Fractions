@@ -176,12 +176,14 @@
 (define (ufrac-dfss D r)
   (define sol '()) 
   (define progress 0)
+  (define num-killed-brs 0)
   (define (dig br num-BRs-above treasure-map)
     (cond [(null? sol)
 	   (let* ([SOLs-BRs (kill br)]
 		  [SOLs (car SOLs-BRs)]
 		  [new-BRs (cdr SOLs-BRs)]
 		  [length-new-BRs (length new-BRs)])
+	     (set! num-killed-brs (add1 num-killed-brs))
 	     (let ([num-BRs (* num-BRs-above length-new-BRs)]
 		   [new-treasure-map (if (> length-new-BRs 1)
 					 (cons length-new-BRs treasure-map)
@@ -192,9 +194,11 @@
 		      (cond [(and verbose? (null? new-BRs))
 			     (set! progress (+ progress
 					       (reciprocal num-BRs-above)))
-			     (printf "progress: ~12,8f%  ~s " (* 100 progress)
-				     (time-utc->date (current-time)))
-			     (printf "~s\n" new-treasure-map)])]
+			     (printf "progress: ~14,10f%  # of killed branches: ~11d  ~s ~s\n"
+				     (* 100 progress)
+				     num-killed-brs
+				     (time-utc->date (current-time))
+				     new-treasure-map)])]
 		     [else (set! sol (map br-denoms-sol (list (car SOLs))))]
 		     )))]
 	  ))
