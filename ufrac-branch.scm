@@ -157,6 +157,8 @@
   ;; This function recursively
   ;; discards denominators whose reciprocals are greater than r
   ;; and reserves denominators whose reciprocals are greater than diff.
+  ;; In a reduced branch, no denominator will have a reciprocal that is
+  ;; greater than r or diff.
   (define (recur r diff denoms rsvd)
     (cond [(or (<= r 0) (<= diff 0))
 	   (list r diff denoms rsvd)]
