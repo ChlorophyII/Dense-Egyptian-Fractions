@@ -167,7 +167,7 @@
 		    (let ([next-BRs (append new-BRs (cdr BRs))]
 			  [n+1 (add1 n)])
 		      (cond [(and verbose? (divide? print-frequency n+1))
-			     (printf "killed branches: ~d size of BRs: ~d ~s \n"
+			     (printf "killed branches: ~12s  branches: ~12s  ~s \n"
 				     n+1
 				     (length BRs)
 				     (time-utc->date (current-time)))
@@ -203,7 +203,7 @@
 		      (cond [(and verbose? (null? new-BRs))
 			     (set! progress (+ progress
 					       (reciprocal num-BRs-above)))
-			     (printf "progress: ~14,10f%  # of killed branches: ~11d  ~s ~s\n"
+			     (printf "progress: ~14,10f%  killed branches: ~12s  ~s ~s\n"
 				     (* 100 progress)
 				     num-killed-brs
 				     (time-utc->date (current-time))
