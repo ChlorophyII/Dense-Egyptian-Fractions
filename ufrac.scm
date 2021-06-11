@@ -145,7 +145,7 @@
 	      (cdr SOLs-BRs))))
 	 BRs)
 	(recur SOLUTIONs new-BRs))]))
-  (recur '() (list (make-br D r))))
+  (recur '() (list (br-reduce (make-br D r)))))
 
 (define (ufrac-dfs D r)
   (define (recur BRs n)
@@ -168,7 +168,7 @@
 		      (recur next-BRs (add1 n)))]
 		   [else
 		    (map br-denoms-sol (list (car SOLs)))]))]))
-  (let ([sol (recur (list (make-br D r)) 0)])
+  (let ([sol (recur (list (br-reduce (make-br D r))) 0)])
     (if (null? sol)
 	#f
 	(car sol))))
@@ -198,7 +198,7 @@
 		     [else (set! sol (map br-denoms-sol (list (car SOLs))))]
 		     )))]
 	  ))
-  (dig (make-br D r) 1 '())
+  (dig (br-reduce (make-br D r)) 1 '())
   (if (null? sol)
 	#f
 	(car sol)))
