@@ -7,7 +7,7 @@
 				(/ 1 (* d x)))))))
 			(range 2 bound))]
 	 [min-gpp (apply min gpp-list)])
-    (inc1 (- bound (length (memq min-gpp gpp-list))))))
+    (add1 (- bound (length (memq min-gpp gpp-list))))))
 
 (define (sld d c)
   (define (recur TLDs)
@@ -20,9 +20,9 @@
 	     (if sol
 		 (append sol (list d (* d c)))
 		 (recur (cdr TLDs))))]))
-  (let ([TLDs (cond [(<= d 100) (list (dec1 d))]
-		    [(divide? 20 (dec1 d)) (range 100 (dec1 d) 20)]		    
-		    [else (append (range 100 (dec1 d) 20) (list (dec1 d)))])
+  (let ([TLDs (cond [(<= d 100) (list (sub1 d))]
+		    [(divide? 20 (sub1 d)) (range 100 (sub1 d) 20)]		    
+		    [else (append (range 100 (sub1 d) 20) (list (sub1 d)))])
 	      ;; TLD stands for third largest denominator
 	      ])
     (recur TLDs)))

@@ -11,9 +11,6 @@
          "\nReciprocal of 0 is undefined.")
         (/ 1 x))))
 
-(define inc1 (lambda (x) (+ x 1)))
-(define dec1 (lambda (x) (- x 1)))
-
 (define square (lambda (x) (* x x)))
 
 (define (divide? a b)
@@ -29,7 +26,7 @@
    [(start stop)
     (map (lambda (x)
            (+ x start))
-         (iota (inc1 (- stop start))))]
+         (iota (add1 (- stop start))))]
    [(start stop step)
     (map (lambda (x)
            (+ (* x step) start))
@@ -102,7 +99,7 @@
     ;; a is expected to be an nonnegative integer.
     (cond [(zero? a) 1]
 	  [(odd? a)
-	   (modulo (* x (recur (dec1 a))) p)]
+	   (modulo (* x (recur (sub1 a))) p)]
 	  [else ;; a should be even.
 	   (let ([r (recur (/ a 2))])
 	     (modulo (* r r) p))]))
