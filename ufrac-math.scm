@@ -229,3 +229,13 @@
              (set-dedupe (cdr set))
              (cons (car set) (set-dedupe (cdr set))))]))
 
+(define (set-distinct-numbers? l)
+  (define (length>=2? l)
+    (and (pair? l)
+         (not (null? (cdr l)))))
+  (define (recur l)
+    (cond [(length>=2? l)
+	   (and (not (= (car l) (cadr l))) (recur (cdr l)))]
+	  [else #t]))
+  (recur (sort < l)))
+
