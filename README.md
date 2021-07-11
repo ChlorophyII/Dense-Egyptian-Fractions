@@ -55,12 +55,12 @@ If the two-line method fails or if you are using another operating system, follo
     to compile files. This is required by the Python interface and also accelerates the program. 
 
 ### Install Python 3 (optional)
-If you do not want to write scheme code, we also provide a Python interface as an option, which requires Python 3. It has all the major functionalities of the scheme version except for `efrac-dfss`. If not installed, `brew install python3` on macOS or download from <cite>[the official website][11]</cite>. 
+If you do not want to write scheme code, we also provide a Python interface as an option, which requires Python 3. It has all the major functionalities of the scheme version except for `efrac-es-progress`. If not installed, `brew install python3` on macOS or download from <cite>[the official website][11]</cite>. 
 
 ## Usage
-The program mainly provides two procedures, `ufrac` and `ufrac-dfs`. The first procedure `ufrac` computes all unit fraction representations of the given number in the given list of integers. The second procedure `ufrac-dfs` determines whether there exists one and returns one if there exists. The postfix "-dfs" stands for depth first search. 
+The program mainly provides two procedures, `ufrac` and `ufrac-es`. The first procedure `ufrac` computes all unit fraction representations of the given rational in the given list of integers. The second procedure `ufrac-es` determines whether there exists a representation of the given rational in the list of integers and returns one if there exists one. The postfix "-es" stands for early-stopping.
 
-There is another procedure, `ufrac-dfss`, which is the same as `ufrac-dfs` except that it tells the progress of computing in verbose mode. 
+There is another procedure, `ufrac-es-progress`, which is the same as `ufrac-es` except that it prints the progress of computing when verbose mode is turned on. 
 ### Chez Scheme Interface
 
 1. Run `chez` in terminal to enter Chez Scheme interpreter.
@@ -69,15 +69,15 @@ There is another procedure, `ufrac-dfss`, which is the same as `ufrac-dfs` excep
 #### Basic Examples  
 
 ```scheme
-> (ufrac '(2 2 4 4) 1)
+> (ufrac '(2 2 4 4) 1) ; a single quote creates a list
 ((2 4 4) (2 2))
 > (ufrac (range 1 10) 3/2)
 ((1 2) (1 3 6))
 > (ufrac (range 1 64) 4)
 ()
-> (ufrac-dfs (range 1 64) 4)
+> (ufrac-es (range 1 64) 4)
 #f
-> (ufrac-dfs (range 1 184) 5)
+> (ufrac-es (range 1 184) 5)
 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
  24 25 26 27 28 29 30 32 33 34 35 36 38 39 40 42 44 45 46 48
  50 51 52 54 55 56 60 62 63 65 66 68 70 72 75 76 77 78 80 81
@@ -86,7 +86,7 @@ There is another procedure, `ufrac-dfss`, which is the same as `ufrac-dfs` excep
  154 155 156 161 162 165 170 171 176 180 184)
 > (rec-sum '(2 3 4)) ; rec-sum stands for sum of reciprocals
 13/12
-> (rec-sum (ufrac-dfs (range 1 65) 4))
+> (rec-sum (ufrac-es (range 1 65) 4))
 4
 > (rec-sum '())
 0
@@ -133,23 +133,22 @@ Notice that `set!` is a built-in procedure of scheme and "set-" as a prefix mean
 >
 ```
 
-To use `ufrac-dfss`, we need to turn on verbose mode. The algorithm has a tree structure, actually more like a mine.  
+To use `ufrac-es-progress`, we need to turn on verbose mode. The algorithm has a tree structure, actually, more like a mine.  
 
 ```
 > (set! verbose? #t)
-> (ufrac-dfss (range 1 184) 5)
-progress:   6.25000000%  #<date Mon Jan 20 00:00:56 2020> (2 2 4)
-progress:  12.50000000%  #<date Mon Jan 20 00:00:56 2020> (2 2 4)
-progress:  14.06250000%  #<date Mon Jan 20 00:00:56 2020> (2 2 2 2 4)
-progress:  15.62500000%  #<date Mon Jan 20 00:00:56 2020> (2 2 2 2 4)
-progress:  16.66666667%  #<date Mon Jan 20 00:00:56 2020> (3 2 2 2 4)
-progress:  16.92708333%  #<date Mon Jan 20 00:00:56 2020> (4 3 2 2 2 4)
+> (ufrac-es-progress (range 1 184) 5)
+progress:   6.2500000000%  killed branches: 42            #<date Sun Jul 11 12:34:39 2021> (2 2 4)
+progress:  12.5000000000%  killed branches: 44            #<date Sun Jul 11 12:34:39 2021> (2 2 4)
+progress:  14.0625000000%  killed branches: 48            #<date Sun Jul 11 12:34:39 2021> (2 2 2 2 4)
+progress:  15.6250000000%  killed branches: 49            #<date Sun Jul 11 12:34:39 2021> (2 2 2 2 4)
+progress:  16.6666666667%  killed branches: 51            #<date Sun Jul 11 12:34:39 2021> (3 2 2 2 4)
 ...
-progress:  44.81547619%  #<date Mon Jan 20 00:00:56 2020> (5 7 12 5 2 3 2 4)
-progress:  44.81572421%  #<date Mon Jan 20 00:00:56 2020> (4 5 7 12 5 2 3 2 4)
-progress:  44.81597222%  #<date Mon Jan 20 00:00:56 2020> (4 5 7 12 5 2 3 2 4)
-progress:  44.81609623%  #<date Mon Jan 20 00:00:56 2020> (2 4 5 7 12 5 2 3 2 4)
-progress:  44.81615823%  #<date Mon Jan 20 00:00:56 2020> (2 2 4 5 7 12 5 2 3 2 4)
+progress:  44.7791666667%  killed branches: 231           #<date Sun Jul 11 12:34:40 2021> (5 6 10 5 2 3 2 4)
+progress:  44.7805555556%  killed branches: 233           #<date Sun Jul 11 12:34:40 2021> (5 6 10 5 2 3 2 4)
+progress:  44.7819444444%  killed branches: 235           #<date Sun Jul 11 12:34:40 2021> (5 6 10 5 2 3 2 4)
+progress:  44.7833333333%  killed branches: 236           #<date Sun Jul 11 12:34:40 2021> (5 6 10 5 2 3 2 4)
+progress:  44.7837962963%  killed branches: 238           #<date Sun Jul 11 12:34:40 2021> (3 5 6 10 5 2 3 2 4)
 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
  24 25 26 27 28 29 30 32 33 34 35 36 38 39 40 42 44 45 46 48
  50 51 52 54 55 56 60 62 63 65 66 68 70 72 75 76 77 78 80 81
@@ -159,7 +158,7 @@ progress:  44.81615823%  #<date Mon Jan 20 00:00:56 2020> (2 2 4 5 7 12 5 2 3 2 
 >
 ```
 
-Combining progress and the list in the end, which we call treasure-map in the code, we can recover the location of the branch that we are exploring. Top levels with only one branch are ommitted from the treasure-map. Treasure-map tells us how the path are connected when branching starts. For example, 6.25% and (2 2 4) together indicates:
+Combining progress and the list at the end of each line, which we call treasure-map in the code, we can recover the location of the branch that we are exploring. Top levels with only one branch are ommitted from the treasure-map. Treasure-map tells us how the path are connected when branching starts. For example, 6.25% and (2 2 4) together indicates:
 
 ```
 Level n                         (A)              
@@ -174,7 +173,7 @@ Level n+3 {A->a->i->1} ~ (A->a->i->2)   | *** unknown world ***
 
 Since level n has 1 branch, we assign weight 1 to `(A)`. Since there are 4 children of `(A)`, we assign weight 1/4 to each of them as children of `(A)`. Similarly, `(A->a->i)` and `{A->a->i->1}` have weight 1/2 as children of their parents respectively. Therefore, completing exploration of `{A->a->i->1}` indicates we have finished 1/4 * 1/2 * 1/2 = 1/16 = 6.25%.
     
-This way of computing progress only gives us a way to locate the branch. It has nothing to do with time. For example, it takes forever to compute `(ufrac-dfss (range 1 500) 6)` and the progress gradually stops increasing at some point, because it is too deep and deep branches have small weights.
+This way of computing progress only gives us a way to locate the branch. It has nothing to do with time. For example, it takes "forever" to compute `(ufrac-es-progress (range 1 1230) 7)`. The number of killed branches keeps increasing at a constant speed, but the progress may come to temporary stop, because the branches being investigated are too deep and deep branches have insignificant weights.
 
 
 ### Python Interface
@@ -184,13 +183,13 @@ Scheme code must be compiled before the first use with
 echo '(load "ufrac-compile.scm")' | chez -q
 ```
     
-1. Use `python3 -i ufrac.py` or `python3` together with `from u_frac import *` to load the program.
+1. Use `python3 -i u_frac.py` or `python3` together with `from u_frac import *` to load the program. The underscore in `u_frac.py` is added to avoid conflict with `ufrac.scm`.
 
-2. `ufrac` and `ufrac_dfs` are well-commented in Python.
+2. `ufrac` and `ufrac_es` are well-commented in Python.
 
     ```python
     >>> help(ufrac)
-    >>> help(ufrac_dfs)
+    >>> help(ufrac_es)
     ```
 3. To create a list of numbers, use either `[1,2,3]` or `list(range(1, 4))`. Notice that `list(range(a,b))` creates a list [a, a+1, ..., b-1]. To create a rational number, or "Fraction" in Python, `Fraction(3)` gives 3 and `Fraction(3,7)` gives 3/7. Do not enter with slash, as `Fraction(1/3)=Fraction(6004799503160661, 18014398509481984)`, which is not the same as 'Fraction(1, 3)'.
 
@@ -212,9 +211,9 @@ echo '(load "ufrac-compile.scm")' | chez -q
 Fraction(11, 6)
 >>> [sum(Fraction(1, d) for d in rep) for rep in reps_5]
 [Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1), Fraction(5, 1)]
->>> ufrac_dfs(list(range(1, 184)), Fraction(5))
+>>> ufrac_es(list(range(1, 184)), Fraction(5))
 False
->>> ufrac_dfs(list(range(1, 185)), Fraction(5))
+>>> ufrac_es(list(range(1, 185)), Fraction(5))
 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 33, 34, 35, 36, 38, 39, 40, 42, 44, 45, 46, 48, 50, 51, 52, 54, 55, 56, 60, 62, 63, 65, 66, 68, 70, 72, 75, 76, 77, 78, 80, 81, 84, 85, 88, 90, 91, 92, 93, 95, 96, 99, 100, 102, 104, 105, 108, 110, 112, 114, 115, 116, 117, 120, 126, 130, 133, 136, 140, 143, 144, 145, 152, 153, 154, 155, 156, 161, 162, 165, 170, 171, 176, 180, 184]
 ```
     

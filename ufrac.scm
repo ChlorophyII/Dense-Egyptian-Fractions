@@ -59,6 +59,8 @@
 	  [(or (negative? r) (negative? diff)) '(())]
 	  [(integer? diff)
 	   (let* ([d (car (br-denoms br))]
+		  ;; since the order of numbers in (br-denoms br) is preserved,
+		  ;; d is always the least number
 		  [rec-d (/ 1 d)])
 	     (cond [(< r rec-d) (cons '() (list (br-discard-first-d br)))]
 		   [(= r rec-d) (cons (list (br-reserve-first-d br))
@@ -156,7 +158,7 @@
 	      r))
   (map br-denoms-sol SOLUTIONs))
 
-(define (ufrac-dfs D r)
+(define (ufrac-es D r)
   (define (recur BRs n)
     (cond [(null? BRs) '()]
 	  [else
@@ -182,7 +184,7 @@
 	#f
 	(car sol))))
 
-(define (ufrac-dfss D r)
+(define (ufrac-es-progress D r)
   (define sol '()) 
   (define progress 0)
   (define num-killed-brs 0)
