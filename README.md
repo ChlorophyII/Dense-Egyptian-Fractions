@@ -32,16 +32,17 @@ The program computes unit fraction representations of a given positive rational 
 This program is implemented in <cite>[Chez Scheme][2]</cite>, so one must install Chez Scheme first. 
 
 ### Install Chez Scheme
-On macOS, the easiest way to install Chez Scheme is by using <cite>[Homebrew][3]</cite>, a great package manager.
+- For a Mac with an Intel CPU, the easiest way to install Chez Scheme is by using <cite>[Homebrew][3]</cite>, a great package manager.
 
-1. Paste the following in a macOS Terminal prompt.
-
+	1. Paste the following in a macOS Terminal prompt.
     ```sh
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     ```
-2. Then run ```brew install chezscheme```
+	2. Then run ```brew install chezscheme```
 
-If the two-line method fails or if you are using another operating system, follow the instructions on <cite>[Chez Scheme][2]</cite>. <cite>[This file][7]</cite> contains detailed instructions.
+- For Apple Silicon or other ARM platforms, say, a Raspberry Pi, follow the instructions on <cite>[Chez Scheme forked by racket][12]</cite>. <cite>[This file][13]</cite> contains detailed instructions. Note that the binary installed in this way is named `scheme` rather than `chez`. One may add the line `alias chez="scheme"` to their .zshrc or .bash_profile. Alternatively, one can replace any `chez` appeared in code in the following tutorial by `scheme`.
+
+- For Windows or Linux, follow the instructions on <cite>[Chez Scheme][2]</cite>. <cite>[This file][7]</cite> contains detailed instructions.
 
 ### Install Dense-Egyptian-Fractions
 1. Clone or download this repository and unzip it.
@@ -229,3 +230,5 @@ False
 [9]:https://cisco.github.io/ChezScheme/csug9.5/csug9_5.pdf
 [10]:https://www.scheme.com/tspl4/
 [11]:https://www.python.org/downloads/
+[12]:https://github.com/racket/ChezScheme
+[13]:https://github.com/racket/ChezScheme/blob/master/BUILDING
