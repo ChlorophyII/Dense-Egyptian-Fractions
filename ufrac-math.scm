@@ -43,10 +43,10 @@
           (append rest
                   (map (lambda (element) (cons (car set) element))
 		       rest)))))
-  (cond [(> (length set) 27)
+  (cond [(> (length set) 29)
          (error
           '<procedure-POWER-SET>
-          (string-append "\nThe power set of a set with more than 27 elements"
+          (string-append "\nThe power set of a set with more than 29 elements"
 			 " may require virtual memory.\n"))]
         [(> (length set) 20)
          (printf "<procedure-POWER-SET>:\nThe set has cardinality ~s. "
