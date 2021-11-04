@@ -8,6 +8,7 @@
 !ufrac-math.scm
 !ufrac-compile.scm
 !ufrac-branch.scm
+!ufrac-mt.scm
 !ufrac-conjecture.scm
 !README.md
 !conjecture.md
