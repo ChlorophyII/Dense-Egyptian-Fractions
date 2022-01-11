@@ -2,7 +2,7 @@
 An algorithm for computing <cite>[unit fraction representations][4]</cite>, hence also <cite>[Egyptian fraction representations][5]</cite>.
 <cite>[![DOI](https://zenodo.org/badge/104223004.svg)][6]</cite>
 
-This algorithm can possibly be used to find the densest Egyptian fraction representations, or verify related conjectures. For example, Greg Martin conjectured that every integer greater than 4 can be the second largest denominator in an Egyptian fraction representation of 1. We have verified this conjecture for integers up to 6000. See [conjecture.md](./conjecture.md) for details.
+This algorithm can be used to find the densest Egyptian fraction representations, or verify related conjectures. For example, Greg Martin conjectured that every integer greater than 4 can be the second largest denominator in an Egyptian fraction representation of 1. We have verified this conjecture for integers up to 6000. See [conjecture.md](./conjecture.md) for details.
 
 ## Table of Contents
 - [Description](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#description)
@@ -14,6 +14,7 @@ This algorithm can possibly be used to find the densest Egyptian fraction repres
     - [Chez Scheme Interface](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#chez-scheme-interface)
         - [Basic Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#basic-examples)
         - [Advanced Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#advanced-examples)
+        - [Multi-threaded version](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#multi-threaded-version)
     - [Python Interface](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#python-interface)
         - [Examples](https://github.com/ChlorophyII/Dense-Egyptian-Fractions#examples)
 - [Conjecture](https://github.com/ChlorophyII/Dense-Egyptian-Fractions/blob/master/conjecture.md#conjecture)
@@ -40,7 +41,7 @@ This program is implemented in <cite>[Chez Scheme][2]</cite>, so one must instal
     ```
 	2. Then run ```brew install chezscheme```
 
-- For Apple Silicon or other ARM platforms, say, a Raspberry Pi, follow the instructions on <cite>[Chez Scheme forked by racket][12]</cite>. <cite>[This file][13]</cite> contains detailed instructions. Note that the binary installed in this way is named `scheme` rather than `chez`. One may add the line `alias chez="scheme"` to their .zshrc or .bash_profile. Alternatively, one can replace any `chez` appeared in code in the following tutorial by `scheme`.
+- For Apple Silicon or other ARM platforms, say, a Raspberry Pi, follow the instructions on <cite>[Chez Scheme forked by racket][12]</cite>. <cite>[This file][13]</cite> contains detailed instructions. Note that the binary installed in this way is named `scheme` rather than `chez`. One may add the line `alias chez="scheme"` to their .zshrc or .bash_profile. Alternatively, one can replace any `chez` that appeared in code in the following tutorial by `scheme`.
 
 - For Windows or Linux, follow the instructions on <cite>[Chez Scheme][2]</cite>. <cite>[This file][7]</cite> contains detailed instructions.
 
@@ -59,9 +60,13 @@ This program is implemented in <cite>[Chez Scheme][2]</cite>, so one must instal
 If you do not want to write scheme code, we also provide a Python interface as an option, which requires Python 3. It has all the major functionalities of the scheme version except for `efrac-es-progress`. If not installed, `brew install python3` on macOS or download from <cite>[the official website][11]</cite>. 
 
 ## Usage
-The program mainly provides two procedures, `ufrac` and `ufrac-es`. The first procedure `ufrac` computes all unit fraction representations of the given rational in the given list of integers. The second procedure `ufrac-es` determines whether there exists a representation of the given rational in the list of integers and returns one if there exists one. The postfix "-es" stands for early-stopping.
+The program mainly provides five procedures.
 
-There is another procedure, `ufrac-es-progress`, which is the same as `ufrac-es` except that it prints the progress of computing when verbose mode is turned on. 
+- `ufrac` computes all unit fraction representations of the given rational in the given list of integers. 
+- `ufrac-es` determines whether there exists a representation of the given rational in the list of integers and returns one if there exists one. The postfix "-es" stands for early-stopping.
+- `ufrac-es-progress` is the same as `ufrac-es` except that it prints the progress of computing when in verbose mode. 
+- `ufrac-mt` is the multi-threaded version of `ufrac`.
+- `ufrac-mt-es` is the multi-threaded version of `ufrac-es`.
 ### Chez Scheme Interface
 
 1. Run `chez` in terminal to enter Chez Scheme interpreter.
@@ -94,7 +99,7 @@ There is another procedure, `ufrac-es-progress`, which is the same as `ufrac-es`
 >
 ```
 #### Advanced Examples
-Many set operations are implemented in "ufrac-math.scm" and they should be self-explanetory. As for referece of scheme, <cite>[The Scheme Programming Language][10]</cite> by R. Kent Dybvig, the principal developer of Chez Scheme, is a good start, and <cite>[Chez Scheme Version 9 User’s Guide][9]</cite> provides more Chez specific information. A more pedagogical and informative book is the Wizard book, <cite>[Structure and Interpretation of Computer Programs][8]</cite>, which is the holy bible of scheme. 
+Many set operations are implemented in "ufrac-math.scm" and they should be self-explanatory. As for reference of scheme, <cite>[The Scheme Programming Language][10]</cite> by R. Kent Dybvig, the principal developer of Chez Scheme, is a good start, and <cite>[Chez Scheme Version 9 User’s Guide][9]</cite> provides more Chez specific information. A more pedagogical and informative book is the Wizard book, <cite>[Structure and Interpretation of Computer Programs][8]</cite>, which is the holy bible of scheme. 
 
 Notice that `set!` is a built-in procedure of scheme and "set-" as a prefix means set operation.  
 
@@ -159,7 +164,7 @@ progress:  44.7837962963%  killed branches: 238           #<date Sun Jul 11 12:3
 >
 ```
 
-Combining progress and the list at the end of each line, which we call treasure-map in the code, we can recover the location of the branch that we are exploring. Top levels with only one branch are ommitted from the treasure-map. Treasure-map tells us how the path are connected when branching starts. For example, 6.25% and (2 2 4) together indicates:
+Combining progress and the list at the end of each line, which we call treasure-map in the code, we can recover the location of the branch that we are exploring. Top levels with only one branch are omitted from the treasure-map. Treasure-map tells us how the path is connected when branching starts. For example, 6.25% and (2 2 4) together indicate:
 
 ```
 Level n                         (A)              
@@ -174,8 +179,14 @@ Level n+3 {A->a->i->1} ~ (A->a->i->2)   | *** unknown world ***
 
 Since level n has 1 branch, we assign weight 1 to `(A)`. Since there are 4 children of `(A)`, we assign weight 1/4 to each of them as children of `(A)`. Similarly, `(A->a->i)` and `{A->a->i->1}` have weight 1/2 as children of their parents respectively. Therefore, completing exploration of `{A->a->i->1}` indicates we have finished 1/4 * 1/2 * 1/2 = 1/16 = 6.25%.
     
-This way of computing progress only gives us a way to locate the branch. It has nothing to do with time. For example, it takes "forever" to compute `(ufrac-es-progress (range 1 1230) 7)`. The number of killed branches keeps increasing at a constant speed, but the progress may come to temporary stop, because the branches being investigated are too deep and deep branches have insignificant weights.
+This way of computing progress only gives us a way to locate the branch. It has nothing to do with time. For example, it takes "forever" to compute `(ufrac-es-progress (range 1 1230) 7)`. The number of killed branches keeps increasing at a constant speed, but the progress may come to a temporary stop, because the branches being investigated are too deep and deep branches have insignificant weights.
 
+#### Multi-threaded version
+`ufrac-mt` and `ufrac-mt-es` can be used in the same way as `ufrac` and `ufrac-es`. For example, one may run `(ufrac-mt-es (range 1 469) 6)`. 
+
+The default number of threads is 8. It can be changed to other suitable numbers, say, 4, by `(set! number-threads 4)`. By default, a thread retrieves and processes 20 branches each time. It can be changed to other numbers, say, 50, by `(set! max-batch-size 50)`. Both the number of threads and the maximum batch size affect the overhead of the multi-threaded version.
+
+We thank [Sam Tobin-Hochstadt][14] for his help in debugging the multithreaded version.
 
 ### Python Interface
 Scheme code must be compiled before the first use with
@@ -232,3 +243,4 @@ False
 [11]:https://www.python.org/downloads/
 [12]:https://github.com/racket/ChezScheme
 [13]:https://github.com/racket/ChezScheme/blob/master/BUILDING
+[14]:https://samth.github.io
